@@ -15,8 +15,8 @@ Server:
 ```java
 package de.javasocketapitest.explanation;
 
-import de.javasocketapi.core.PacketRegistry;
-import de.javasocketapi.core.Server;
+import PacketRegistry;
+import Server;
 
 import java.io.IOException;
 
@@ -51,8 +51,8 @@ Client:
 ```java
 package de.javasocketapitest.explanation;
 
-import de.javasocketapi.core.Client;
-import de.javasocketapi.core.PacketRegistry;
+import Client;
+import PacketRegistry;
 
 import java.io.IOException;
 
@@ -91,9 +91,9 @@ RequestTimePacket:
 ```java
 package de.javasocketapitest.explanation;
 
-import de.javasocketapi.core.Packet;
-import de.javasocketapi.core.ReadingByteBuffer;
-import de.javasocketapi.core.WritingByteBuffer;
+import Packet;
+import ReadingByteBuffer;
+import WritingByteBuffer;
 
 import java.util.UUID;
 
@@ -119,9 +119,9 @@ ReturnTimePacket:
 ```java
 package de.javasocketapitest.explanation;
 
-import de.javasocketapi.core.Packet;
-import de.javasocketapi.core.ReadingByteBuffer;
-import de.javasocketapi.core.WritingByteBuffer;
+import Packet;
+import ReadingByteBuffer;
+import WritingByteBuffer;
 
 import java.util.UUID;
 

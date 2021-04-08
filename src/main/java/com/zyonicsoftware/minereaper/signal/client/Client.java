@@ -1,4 +1,9 @@
-package de.javasocketapi.core;
+package com.zyonicsoftware.minereaper.signal.client;
+
+import com.zyonicsoftware.minereaper.signal.connection.Connection;
+import com.zyonicsoftware.minereaper.signal.incoming.InputStreamThread;
+import com.zyonicsoftware.minereaper.signal.outgoing.OutputStreamThread;
+import com.zyonicsoftware.minereaper.signal.packet.Packet;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -28,7 +33,7 @@ public class Client extends Connection {
         this.port = port;
     }
 
-    Client(final Socket socket) {
+    public Client(final Socket socket) {
         this.socket = socket;
     }
 

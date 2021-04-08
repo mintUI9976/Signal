@@ -1,4 +1,10 @@
-package de.javasocketapi.core;
+package com.zyonicsoftware.minereaper.signal.outgoing;
+
+import com.zyonicsoftware.minereaper.signal.buffer.WritingByteBuffer;
+import com.zyonicsoftware.minereaper.signal.client.Client;
+import com.zyonicsoftware.minereaper.signal.packet.Packet;
+import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
+import com.zyonicsoftware.minereaper.signal.packet.UpdateUUIDPacket;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -9,7 +15,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-class OutputStreamThread {
+public class OutputStreamThread {
 
     private final Client client;
     private final Socket socket;
@@ -24,7 +30,7 @@ class OutputStreamThread {
 
     public void run() throws IOException {
         //initialise outputStream
-        finalOutputStream = this.socket.getOutputStream();
+        this.finalOutputStream = this.socket.getOutputStream();
         //start sending send byte arrays
         this.timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -62,13 +68,13 @@ class OutputStreamThread {
                                 //receive bytes
                                 final byte[] bytes = writingByteBuffer.toBytes();
                                 //check if outputstream is null
-                                assert finalOutputStream != null;
+                                assert OutputStreamThread.this.finalOutputStream != null;
                                 //write bytes length
-                                finalOutputStream.write(bytes.length);
+                                OutputStreamThread.this.finalOutputStream.write(bytes.length);
                                 //write bytes
-                                finalOutputStream.write(bytes);
+                                OutputStreamThread.this.finalOutputStream.write(bytes);
                                 //flush outputStream
-                                finalOutputStream.flush();
+                                OutputStreamThread.this.finalOutputStream.flush();
                             } catch (final SocketException exception) {
                                 exception.printStackTrace();
                             }
@@ -85,7 +91,7 @@ class OutputStreamThread {
         try {
             this.finalOutputStream.close();
             this.timer.cancel();
-        } catch (IOException exception) {
+        } catch (final IOException exception) {
             exception.printStackTrace();
         }
     }

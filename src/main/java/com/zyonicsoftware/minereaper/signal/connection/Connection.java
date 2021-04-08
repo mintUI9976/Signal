@@ -1,10 +1,10 @@
-package de.javasocketapi.core;
+package com.zyonicsoftware.minereaper.signal.connection;
 
 import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-abstract class Connection {
+public abstract class Connection {
 
     private final AtomicReference<UUID> connectionUUID = new AtomicReference<>(UUID.randomUUID());
 

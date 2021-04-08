@@ -1,4 +1,8 @@
-package de.javasocketapi.core;
+package com.zyonicsoftware.minereaper.signal.server;
+
+import com.zyonicsoftware.minereaper.signal.client.Client;
+import com.zyonicsoftware.minereaper.signal.packet.Packet;
+import com.zyonicsoftware.minereaper.signal.packet.UpdateUUIDPacket;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -7,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-class ServerSocketAcceptingThread extends Thread {
+public class ServerSocketAcceptingThread extends Thread {
 
     private final ServerSocket serverSocket;
     private final List<Client> clients = new ArrayList<>();
@@ -28,6 +32,7 @@ class ServerSocketAcceptingThread extends Thread {
                     final Socket socket = this.serverSocket.accept();
                     final Client client = new Client(socket);
                     client.connect();
+                    System.out.println("Client Connected");
                     this.clients.add(client);
                     //update connectionUUID on client side
                     final UpdateUUIDPacket updateUUIDPacket = new UpdateUUIDPacket(client.getConnectionUUID().get());

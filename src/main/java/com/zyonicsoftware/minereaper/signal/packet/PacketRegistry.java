@@ -1,4 +1,4 @@
-package de.javasocketapi.core;
+package com.zyonicsoftware.minereaper.signal.packet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,11 +7,11 @@ public class PacketRegistry {
 
     private static final List<Class<? extends Packet>> registeredPackets = new ArrayList<>();
 
-    static int indexOf(final Class<? extends Packet> packetClass) {
+    public static int indexOf(final Class<? extends Packet> packetClass) {
         return PacketRegistry.registeredPackets.indexOf(packetClass);
     }
 
-    static Class<? extends Packet> get(final int index) {
+    public static Class<? extends Packet> get(final int index) {
         return PacketRegistry.registeredPackets.get(index);
     }
 

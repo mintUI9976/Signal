@@ -1,4 +1,7 @@
-package de.javasocketapi.core;
+package com.zyonicsoftware.minereaper.signal.packet;
+
+import com.zyonicsoftware.minereaper.signal.buffer.ReadingByteBuffer;
+import com.zyonicsoftware.minereaper.signal.buffer.WritingByteBuffer;
 
 import java.util.UUID;
 
@@ -16,6 +19,6 @@ public abstract class Packet {
 
     public abstract void send(WritingByteBuffer writingByteBuffer);
 
-    public abstract void recieve(ReadingByteBuffer readingByteBuffer);
+    public abstract void receive(ReadingByteBuffer readingByteBuffer);
 
 }

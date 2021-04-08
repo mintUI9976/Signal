@@ -18,7 +18,6 @@ repositories {
 
 dependencies {
     compile group: 'io.fastjson', name: 'boon', version: '0.34'
-
 }
 
 jar {

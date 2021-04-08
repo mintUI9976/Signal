@@ -1,4 +1,7 @@
-package de.javasocketapi.core;
+package com.zyonicsoftware.minereaper.signal.server;
+
+import com.zyonicsoftware.minereaper.signal.connection.Connection;
+import com.zyonicsoftware.minereaper.signal.packet.Packet;
 
 import java.io.IOException;
 import java.net.ServerSocket;
