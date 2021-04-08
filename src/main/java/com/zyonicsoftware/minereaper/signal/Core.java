@@ -22,6 +22,7 @@ public class Core {
     public static void main(final String[] args) throws IOException {
         final String input = Core.scanner.next();
         PacketRegistry.registerPacket(TestPacket.class);
+        //4r
         final int a = 20 - 10;
         for (int i = 0; i < 54; i++) {
             Core.stringIntegerMap.put("Lobby-" + i, new Random().nextInt(a) + 10);
