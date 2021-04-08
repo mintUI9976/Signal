@@ -5,7 +5,7 @@ plugins {
 
 apply plugin: 'maven'
 
-group 'de.javasocketapi'
+group 'com.zyonicsoftware.minereaper.signal'
 version 'v0.1.7'
 
 tasks.withType(JavaCompile) {
