@@ -44,4 +44,3 @@ deploy:
       - build
       - .gradle
   only:
-    - main
