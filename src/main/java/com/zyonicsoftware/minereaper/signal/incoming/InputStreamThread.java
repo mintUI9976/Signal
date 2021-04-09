@@ -2,6 +2,7 @@ package com.zyonicsoftware.minereaper.signal.incoming;
 
 import com.zyonicsoftware.minereaper.signal.buffer.ReadingByteBuffer;
 import com.zyonicsoftware.minereaper.signal.client.Client;
+import com.zyonicsoftware.minereaper.signal.exception.SignalException;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
 
@@ -9,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
-import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -47,28 +47,34 @@ public class InputStreamThread {
                         if (InputStreamThread.this.finalInputStream.available() > 0) {
                             final int b = InputStreamThread.this.finalInputStream.read();
                             if (b != -1) {
-                                System.out.println(b);
-                                InputStreamThread.this.bytes.set(new byte[b]);
-                                System.out.println(Arrays.toString(InputStreamThread.this.bytes.get()));
-                                //receive bytes
-                                InputStreamThread.this.finalInputStream.read(InputStreamThread.this.bytes.get(), 0, b);
-                                final ReadingByteBuffer readingByteBuffer = new ReadingByteBuffer(InputStreamThread.this.bytes.get());
-                                //read packetId
-                                final int packetId = readingByteBuffer.readInt();
+                                if (b < 255) {
+                                    InputStreamThread.this.bytes.set(new byte[b]);
+                                    //receive bytes
+                                    InputStreamThread.this.finalInputStream.read(InputStreamThread.this.bytes.get(), 0, b);
+                                    final ReadingByteBuffer readingByteBuffer = new ReadingByteBuffer(InputStreamThread.this.bytes.get());
+                                    //read packetId
+                                    final int packetId = readingByteBuffer.readInt();
 
-                                //check if packet is UpdateUUIDPacket
-                                if (packetId == -2) {
-                                    //read connectionUUID
-                                    final UUID connectionUUID = readingByteBuffer.readUUID();
-                                    //set updated connectionUUID
-                                    InputStreamThread.this.client.getConnectionUUID().set(connectionUUID);
+                                    //check if packet is UpdateUUIDPacket
+                                    if (packetId == -2) {
+                                        //read connectionUUID
+                                        final UUID connectionUUID = readingByteBuffer.readUUID();
+                                        //set updated connectionUUID
+                                        InputStreamThread.this.client.getConnectionUUID().set(connectionUUID);
+                                    } else {
+                                        //get packet
+                                        final Class<? extends Packet> packet = PacketRegistry.get(packetId);
+                                        if (packet != null) {
+                                            //read connectionUUID
+                                            final UUID connectionUUID = readingByteBuffer.readUUID();
+                                            //initialise packet
+                                            packet.getDeclaredConstructor(UUID.class).newInstance(connectionUUID).receive(readingByteBuffer);
+                                        } else {
+                                            System.out.println("packet can not be triggered");
+                                        }
+                                    }
                                 } else {
-                                    //get packet
-                                    final Class<? extends Packet> packet = PacketRegistry.get(packetId);
-                                    //read connectionUUID
-                                    final UUID connectionUUID = readingByteBuffer.readUUID();
-                                    //initialise packet
-                                    packet.getDeclaredConstructor(UUID.class).newInstance(connectionUUID).receive(readingByteBuffer);
+                                    System.out.println("packet can not received");
                                 }
                             } else {
                                 //close socket
@@ -76,7 +82,7 @@ public class InputStreamThread {
                             }
                         }
                     } catch (final InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | IOException exception) {
-                        exception.printStackTrace();
+                        throw new SignalException("", exception);
                     }
                 }
             }, 0, 1);

@@ -67,14 +67,18 @@ public class OutputStreamThread {
                             try {
                                 //receive bytes
                                 final byte[] bytes = writingByteBuffer.toBytes();
-                                //check if outputstream is null
-                                assert OutputStreamThread.this.finalOutputStream != null;
-                                //write bytes length
-                                OutputStreamThread.this.finalOutputStream.write(bytes.length);
-                                //write bytes
-                                OutputStreamThread.this.finalOutputStream.write(bytes);
-                                //flush outputStream
-                                OutputStreamThread.this.finalOutputStream.flush();
+                                if (bytes.length < 255) {
+                                    //check if outputstream is null
+                                    assert OutputStreamThread.this.finalOutputStream != null;
+                                    //write bytes length
+                                    OutputStreamThread.this.finalOutputStream.write(bytes.length);
+                                    //write bytes
+                                    OutputStreamThread.this.finalOutputStream.write(bytes);
+                                    //flush outputStream
+                                    OutputStreamThread.this.finalOutputStream.flush();
+                                } else {
+                                    System.out.println("can not be send");
+                                }
                             } catch (final SocketException exception) {
                                 exception.printStackTrace();
                             }
