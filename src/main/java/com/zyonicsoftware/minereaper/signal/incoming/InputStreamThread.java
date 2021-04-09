@@ -5,6 +5,7 @@ import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.exception.SignalException;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
+import com.zyonicsoftware.minereaper.signal.signal.SignalProvider;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,6 +48,7 @@ public class InputStreamThread {
                         if (InputStreamThread.this.finalInputStream.available() > 0) {
                             final int b = InputStreamThread.this.finalInputStream.read();
                             if (b != -1) {
+                                //check if byte array length smaller then 255 bytes
                                 if (b < 255) {
                                     InputStreamThread.this.bytes.set(new byte[b]);
                                     //receive bytes
@@ -64,17 +66,18 @@ public class InputStreamThread {
                                     } else {
                                         //get packet
                                         final Class<? extends Packet> packet = PacketRegistry.get(packetId);
+                                        // check if received packet not null
                                         if (packet != null) {
                                             //read connectionUUID
                                             final UUID connectionUUID = readingByteBuffer.readUUID();
                                             //initialise packet
                                             packet.getDeclaredConstructor(UUID.class).newInstance(connectionUUID).receive(readingByteBuffer);
                                         } else {
-                                            System.out.println("packet can not be triggered");
+                                            System.out.println(SignalProvider.getSignalProvider().getIncomingPacketIsNull());
                                         }
                                     }
                                 } else {
-                                    System.out.println("packet can not received");
+                                    System.out.println(SignalProvider.getSignalProvider().getIncomingLengthToLarge());
                                 }
                             } else {
                                 //close socket
@@ -82,12 +85,12 @@ public class InputStreamThread {
                             }
                         }
                     } catch (final InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | IOException exception) {
-                        throw new SignalException("", exception);
+                        throw new SignalException(SignalProvider.getSignalProvider().getIncomingInputThrowsAnException(), exception);
                     }
                 }
             }, 0, 1);
         } catch (final IOException exception) {
-            exception.printStackTrace();
+            throw new SignalException(SignalProvider.getSignalProvider().getInputStreamThrowsAnException(), exception);
         }
         //start reading byte arrays
     }

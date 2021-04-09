@@ -4,7 +4,8 @@ import com.zyonicsoftware.minereaper.signal.buffer.WritingByteBuffer;
 import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
-import com.zyonicsoftware.minereaper.signal.packet.UpdateUUIDPacket;
+import com.zyonicsoftware.minereaper.signal.packet.ahead.UpdateUUIDPacket;
+import com.zyonicsoftware.minereaper.signal.signal.SignalProvider;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -77,7 +78,7 @@ public class OutputStreamThread {
                                     //flush outputStream
                                     OutputStreamThread.this.finalOutputStream.flush();
                                 } else {
-                                    System.out.println("can not be send");
+                                    System.out.println(SignalProvider.getSignalProvider().getOutgoingLengthToLarge());
                                 }
                             } catch (final SocketException exception) {
                                 exception.printStackTrace();

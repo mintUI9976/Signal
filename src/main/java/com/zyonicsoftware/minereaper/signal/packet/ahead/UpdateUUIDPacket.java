@@ -1,7 +1,8 @@
-package com.zyonicsoftware.minereaper.signal.packet;
+package com.zyonicsoftware.minereaper.signal.packet.ahead;
 
 import com.zyonicsoftware.minereaper.signal.buffer.ReadingByteBuffer;
 import com.zyonicsoftware.minereaper.signal.buffer.WritingByteBuffer;
+import com.zyonicsoftware.minereaper.signal.packet.Packet;
 
 import java.util.UUID;
 
