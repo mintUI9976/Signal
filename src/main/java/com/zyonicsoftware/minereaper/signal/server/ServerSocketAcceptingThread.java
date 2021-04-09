@@ -1,6 +1,7 @@
 package com.zyonicsoftware.minereaper.signal.server;
 
 import com.zyonicsoftware.minereaper.signal.client.Client;
+import com.zyonicsoftware.minereaper.signal.exception.SignalException;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.packet.ahead.UpdateUUIDPacket;
 
@@ -39,7 +40,7 @@ public class ServerSocketAcceptingThread extends Thread {
                 }
             }
         } catch (final IOException exception) {
-            exception.printStackTrace();
+            throw new SignalException(exception);
         }
     }
 
@@ -60,7 +61,7 @@ public class ServerSocketAcceptingThread extends Thread {
                 System.out.println("[JavaSocketAPI] Client: " + client.getConnectionUUID().get() + " will be disconnected!");
                 client.disconnect();
             } catch (final IOException exception) {
-                exception.printStackTrace();
+                throw new SignalException(exception);
             }
         });
     }
@@ -74,7 +75,7 @@ public class ServerSocketAcceptingThread extends Thread {
                     client.disconnect();
                 }
             } catch (final IOException exception) {
-                exception.printStackTrace();
+                throw new SignalException(exception);
             }
         });
         this.clients.clear();

@@ -2,6 +2,7 @@ package com.zyonicsoftware.minereaper.signal.outgoing;
 
 import com.zyonicsoftware.minereaper.signal.buffer.WritingByteBuffer;
 import com.zyonicsoftware.minereaper.signal.client.Client;
+import com.zyonicsoftware.minereaper.signal.exception.SignalException;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
 import com.zyonicsoftware.minereaper.signal.packet.ahead.UpdateUUIDPacket;
@@ -81,12 +82,12 @@ public class OutputStreamThread {
                                     System.out.println(SignalProvider.getSignalProvider().getOutgoingLengthToLarge());
                                 }
                             } catch (final SocketException exception) {
-                                exception.printStackTrace();
+                                throw new SignalException(SignalProvider.getSignalProvider().getOutgoingSocketException(), exception);
                             }
                         }
                     }
                 } catch (final IOException | NullPointerException exception) {
-                    exception.printStackTrace();
+                    throw new SignalException(SignalProvider.getSignalProvider().getOutputStreamThrowsAnException(), exception);
                 }
             }
         }, 0, 1);
@@ -97,7 +98,7 @@ public class OutputStreamThread {
             this.finalOutputStream.close();
             this.timer.cancel();
         } catch (final IOException exception) {
-            exception.printStackTrace();
+            throw new SignalException(exception);
         }
     }
 

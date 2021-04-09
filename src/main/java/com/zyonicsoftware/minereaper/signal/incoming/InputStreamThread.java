@@ -100,7 +100,7 @@ public class InputStreamThread {
             this.finalInputStream.close();
             this.timer.cancel();
         } catch (final IOException exception) {
-            exception.printStackTrace();
+            throw new SignalException(exception);
         }
     }
 }

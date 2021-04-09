@@ -10,6 +10,8 @@ public class SignalProvider {
     private final String incomingPacketIsNull;
     private final String incomingInputThrowsAnException;
     private final String outgoingLengthToLarge;
+    private final String outgoingSocketException;
+    private final String outputStreamThrowsAnException;
 
     {
         this.prefix = "Signal > ";
@@ -18,6 +20,16 @@ public class SignalProvider {
         this.incomingInputThrowsAnException = this.prefix + "An accepted byte array throws an exception, please restart your service.";
         this.inputStreamThrowsAnException = this.prefix + "The input stream cannot be opened or is null.";
         this.outgoingLengthToLarge = this.prefix + "The sending byte array length is larger than 255.";
+        this.outgoingSocketException = this.prefix + "The sending bytes can not be written or flushed.";
+        this.outputStreamThrowsAnException = this.prefix + "The output stream is closed or is null.";
+    }
+
+    public String getOutputStreamThrowsAnException() {
+        return this.outputStreamThrowsAnException;
+    }
+
+    public String getOutgoingSocketException() {
+        return this.outgoingSocketException;
     }
 
     public String getOutgoingLengthToLarge() {
