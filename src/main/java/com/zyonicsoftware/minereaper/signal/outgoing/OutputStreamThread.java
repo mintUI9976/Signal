@@ -3,6 +3,8 @@ package com.zyonicsoftware.minereaper.signal.outgoing;
 import com.zyonicsoftware.minereaper.signal.buffer.WritingByteBuffer;
 import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.exception.SignalException;
+import com.zyonicsoftware.minereaper.signal.message.RegisteredMessenger;
+import com.zyonicsoftware.minereaper.signal.message.SignalMessages;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
 import com.zyonicsoftware.minereaper.signal.packet.ahead.UpdateUUIDPacket;
@@ -10,6 +12,7 @@ import com.zyonicsoftware.minereaper.signal.signal.SignalProvider;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ public class OutputStreamThread {
     private final List<Packet> packets = new ArrayList<>();
     private final Timer timer = new Timer();
     private OutputStream finalOutputStream;
+    private final Class<? extends SignalMessages> signalMessages = RegisteredMessenger.get();
 
     public OutputStreamThread(final Client client) {
         this.client = client;
@@ -78,10 +82,12 @@ public class OutputStreamThread {
                                     OutputStreamThread.this.finalOutputStream.write(bytes);
                                     //flush outputStream
                                     OutputStreamThread.this.finalOutputStream.flush();
+                                    SignalProvider.getSignalProvider().setOutgoingPackets(SignalProvider.getSignalProvider().getOutgoingPackets() + 1);
+                                    OutputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance("").sendPacketMessage(SignalProvider.getSignalProvider().getOutgoingPacketMessage());
                                 } else {
-                                    System.out.println(SignalProvider.getSignalProvider().getOutgoingLengthToLarge());
+                                    OutputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance("").outgoingLengthToLargeMessage(SignalProvider.getSignalProvider().getOutgoingLengthToLarge());
                                 }
-                            } catch (final SocketException exception) {
+                            } catch (final SocketException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException exception) {
                                 throw new SignalException(SignalProvider.getSignalProvider().getOutgoingSocketException(), exception);
                             }
                         }

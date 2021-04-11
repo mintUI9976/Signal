@@ -3,6 +3,8 @@ package com.zyonicsoftware.minereaper.signal.incoming;
 import com.zyonicsoftware.minereaper.signal.buffer.ReadingByteBuffer;
 import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.exception.SignalException;
+import com.zyonicsoftware.minereaper.signal.message.RegisteredMessenger;
+import com.zyonicsoftware.minereaper.signal.message.SignalMessages;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
 import com.zyonicsoftware.minereaper.signal.signal.SignalProvider;
@@ -23,6 +25,7 @@ public class InputStreamThread {
     private final Timer timer = new Timer();
     private InputStream finalInputStream;
     final AtomicReference<byte[]> bytes = new AtomicReference<>(null);
+    private final Class<? extends SignalMessages> signalMessages = RegisteredMessenger.get();
 
     public InputStreamThread(final Client client) {
         this.client = client;
@@ -66,18 +69,21 @@ public class InputStreamThread {
                                     } else {
                                         //get packet
                                         final Class<? extends Packet> packet = PacketRegistry.get(packetId);
+
                                         // check if received packet not null
                                         if (packet != null) {
                                             //read connectionUUID
                                             final UUID connectionUUID = readingByteBuffer.readUUID();
                                             //initialise packet
                                             packet.getDeclaredConstructor(UUID.class).newInstance(connectionUUID).receive(readingByteBuffer);
+                                            SignalProvider.getSignalProvider().setIncomingPackets(SignalProvider.getSignalProvider().getIncomingPackets() + 1);
+                                            InputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance("").receivePacketMessage(SignalProvider.getSignalProvider().getIncomingPacketMessage());
                                         } else {
-                                            System.out.println(SignalProvider.getSignalProvider().getIncomingPacketIsNull());
+                                            InputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance("").incomingPacketIsNullMessage(SignalProvider.getSignalProvider().getIncomingPacketIsNull());
                                         }
                                     }
                                 } else {
-                                    System.out.println(SignalProvider.getSignalProvider().getIncomingLengthToLarge());
+                                    InputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance("").incomingLengthToLargeMessage(SignalProvider.getSignalProvider().getIncomingLengthToLarge());
                                 }
                             } else {
                                 //close socket
