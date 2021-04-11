@@ -30,8 +30,9 @@ public class Compression {
                 final int amount = deflater.deflate(bytesBuffer);
                 byteArrayOutputStream.write(bytesBuffer, 0, amount);
             }
+            final byte[] compress = byteArrayOutputStream.toByteArray();
             byteArrayOutputStream.close();
-            return byteArrayOutputStream.toByteArray();
+            return compress;
         } catch (final IOException exception) {
             throw new SignalException("Failed to compressed byte array!", exception);
         }
@@ -51,8 +52,9 @@ public class Compression {
                 final int count = inflater.inflate(bytesBuffer);
                 byteArrayOutputStream.write(bytesBuffer, 0, count);
             }
+            final String decompress = byteArrayOutputStream.toString(StandardCharsets.UTF_8);
             byteArrayOutputStream.close();
-            return byteArrayOutputStream.toString(StandardCharsets.UTF_8);
+            return decompress;
         } catch (final DataFormatException | IOException exception) {
             throw new SignalException("Failed to decompressed byte array!", exception);
         }
@@ -72,8 +74,9 @@ public class Compression {
                 final int count = inflater.inflate(bytesBuffer);
                 byteArrayOutputStream.write(bytesBuffer, 0, count);
             }
+            final byte[] decompress = byteArrayOutputStream.toByteArray();
             byteArrayOutputStream.close();
-            return byteArrayOutputStream.toByteArray();
+            return decompress;
         } catch (final DataFormatException | IOException exception) {
             throw new SignalException("Failed to decompressed byte array!", exception);
         }
