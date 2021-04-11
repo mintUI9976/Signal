@@ -1,13 +1,10 @@
 package com.zyonicsoftware.minereaper.signal.compression;
 
-import com.zyonicsoftware.minereaper.signal.exception.SignalException;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
+import java.io.OutputStream;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterOutputStream;
 
 public class Compression {
 
@@ -18,7 +15,7 @@ public class Compression {
      * @param data byte[] will be used to compress the information at the defalter algorithm.
      * @return an compressed information byte[].
      */
-    public byte[] compress(final byte... data) {
+   /* public byte[] compress(final byte... data) {
         try {
             final Deflater deflater = new Deflater();
             deflater.setInput(data);
@@ -36,13 +33,14 @@ public class Compression {
         } catch (final IOException exception) {
             throw new SignalException("Failed to compressed byte array!", exception);
         }
-    }
+    }*/
 
     /**
-     * @param data byte[] will be used to decompress the information at the inflater algorithm.
+     * //* @param data byte[] will be used to decompress the information at the inflater algorithm.
+     *
      * @return an decompress string
      */
-    public String decompressAsString(final byte[] data) {
+    /*public String decompressAsString(final byte[] data) {
         try {
             final Inflater inflater = new Inflater();
             inflater.setInput(data);
@@ -58,13 +56,33 @@ public class Compression {
         } catch (final DataFormatException | IOException exception) {
             throw new SignalException("Failed to decompressed byte array!", exception);
         }
+    }*/
+    public byte[] compress(final byte... bArray) {
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (final DeflaterOutputStream deflaterOutputStream = new DeflaterOutputStream(byteArrayOutputStream)) {
+            deflaterOutputStream.write(bArray);
+        } catch (final IOException exception) {
+            exception.printStackTrace();
+        }
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    public byte[] decompressAsByteArray(final byte... compressedTxt) {
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (final OutputStream outputStream = new InflaterOutputStream(byteArrayOutputStream)) {
+            outputStream.write(compressedTxt);
+        } catch (final IOException exception) {
+            exception.printStackTrace();
+        }
+        return byteArrayOutputStream.toByteArray();
     }
 
     /**
-     * @param data byte[] will be used to decompress the information at the inflater algorithm.
+     * //* @param data byte[] will be used to decompress the information at the inflater algorithm.
+     *
      * @return an decompress byte[]
      */
-    public byte[] decompressAsByteArray(final byte... data) {
+    /*public byte[] decompressAsByteArray(final byte... data) {
         try {
             final Inflater inflater = new Inflater();
             inflater.setInput(data);
@@ -80,8 +98,7 @@ public class Compression {
         } catch (final DataFormatException | IOException exception) {
             throw new SignalException("Failed to decompressed byte array!", exception);
         }
-    }
-
+    }*/
     public static Compression getCompression() {
         return Compression.compression;
     }
