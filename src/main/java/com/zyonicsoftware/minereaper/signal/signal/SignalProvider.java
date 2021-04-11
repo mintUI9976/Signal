@@ -14,6 +14,8 @@ public class SignalProvider {
     private final String outputStreamThrowsAnException;
     private final String outgoingPacketMessage;
     private final String incomingPacketMessage;
+    private final String incomingSocketCloseMessage;
+    private final String acceptSocketConnectionMessage;
     private int outgoingPackets;
     private int incomingPackets;
 
@@ -26,10 +28,20 @@ public class SignalProvider {
         this.outgoingLengthToLarge = this.prefix + "The sending byte array length is larger than 255.";
         this.outgoingSocketException = this.prefix + "The sending bytes can not be written or flushed.";
         this.outputStreamThrowsAnException = this.prefix + "The output stream is closed or is null.";
-        this.outgoingPacketMessage = this.prefix + "The package was successfully sent.";
+        this.outgoingPacketMessage = this.prefix + "The packet was successfully sent.";
         this.incomingPacketMessage = this.prefix + "The packet was received successfully.";
+        this.incomingSocketCloseMessage = this.prefix + "The client connection will be closed.";
+        this.acceptSocketConnectionMessage = this.prefix + "The client connection has been accepted.";
         this.outgoingPackets = 0;
         this.incomingPackets = 0;
+    }
+
+    public String getAcceptSocketConnectionMessage() {
+        return this.acceptSocketConnectionMessage;
+    }
+
+    public String getIncomingSocketCloseMessage() {
+        return this.incomingSocketCloseMessage;
     }
 
     public String getIncomingPacketMessage() {

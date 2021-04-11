@@ -77,16 +77,17 @@ public class InputStreamThread {
                                             //initialise packet
                                             packet.getDeclaredConstructor(UUID.class).newInstance(connectionUUID).receive(readingByteBuffer);
                                             SignalProvider.getSignalProvider().setIncomingPackets(SignalProvider.getSignalProvider().getIncomingPackets() + 1);
-                                            InputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance("").receivePacketMessage(SignalProvider.getSignalProvider().getIncomingPacketMessage());
+                                            InputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).receivePacketMessage(SignalProvider.getSignalProvider().getIncomingPacketMessage());
                                         } else {
-                                            InputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance("").incomingPacketIsNullMessage(SignalProvider.getSignalProvider().getIncomingPacketIsNull());
+                                            InputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).receivePacketIsNullMessage(SignalProvider.getSignalProvider().getIncomingPacketIsNull());
                                         }
                                     }
                                 } else {
-                                    InputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance("").incomingLengthToLargeMessage(SignalProvider.getSignalProvider().getIncomingLengthToLarge());
+                                    InputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).receiveLengthToLargeMessage(SignalProvider.getSignalProvider().getIncomingLengthToLarge());
                                 }
                             } else {
                                 //close socket
+                                InputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).receiveSocketCloseMessage(SignalProvider.getSignalProvider().getIncomingSocketCloseMessage());
                                 InputStreamThread.this.socket.close();
                             }
                         }

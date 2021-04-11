@@ -83,9 +83,9 @@ public class OutputStreamThread {
                                     //flush outputStream
                                     OutputStreamThread.this.finalOutputStream.flush();
                                     SignalProvider.getSignalProvider().setOutgoingPackets(SignalProvider.getSignalProvider().getOutgoingPackets() + 1);
-                                    OutputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance("").sendPacketMessage(SignalProvider.getSignalProvider().getOutgoingPacketMessage());
+                                    OutputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).sendPacketMessage(SignalProvider.getSignalProvider().getOutgoingPacketMessage());
                                 } else {
-                                    OutputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance("").outgoingLengthToLargeMessage(SignalProvider.getSignalProvider().getOutgoingLengthToLarge());
+                                    OutputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).sendLengthToLargeMessage(SignalProvider.getSignalProvider().getOutgoingLengthToLarge());
                                 }
                             } catch (final SocketException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException exception) {
                                 throw new SignalException(SignalProvider.getSignalProvider().getOutgoingSocketException(), exception);

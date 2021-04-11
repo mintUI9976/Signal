@@ -2,10 +2,14 @@ package com.zyonicsoftware.minereaper.signal.server;
 
 import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.exception.SignalException;
+import com.zyonicsoftware.minereaper.signal.message.RegisteredMessenger;
+import com.zyonicsoftware.minereaper.signal.message.SignalMessages;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.packet.ahead.UpdateUUIDPacket;
+import com.zyonicsoftware.minereaper.signal.signal.SignalProvider;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -16,6 +20,7 @@ public class ServerSocketAcceptingThread extends Thread {
 
     private final ServerSocket serverSocket;
     private final List<Client> clients = new ArrayList<>();
+    private final Class<? extends SignalMessages> signalMessages = RegisteredMessenger.get();
 
     public ServerSocketAcceptingThread(final ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
@@ -34,12 +39,13 @@ public class ServerSocketAcceptingThread extends Thread {
                     final Client client = new Client(socket);
                     client.connect();
                     this.clients.add(client);
+                    this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).acceptSocketConnectionMessage(SignalProvider.getSignalProvider().getAcceptSocketConnectionMessage());
                     //update connectionUUID on client side
                     final UpdateUUIDPacket updateUUIDPacket = new UpdateUUIDPacket(client.getConnectionUUID().get());
                     client.send(updateUUIDPacket);
                 }
             }
-        } catch (final IOException exception) {
+        } catch (final IOException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException exception) {
             throw new SignalException(exception);
         }
     }
