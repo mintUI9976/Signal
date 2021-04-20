@@ -61,12 +61,6 @@ public class ReadingByteBuffer {
 
     public String readLargeString() {
         //read string
-
-        /*final int length = this.readInt();
-        final byte[] bytes =  new byte[length];
-        IntStream.range(0, length).forEach(i -> bytes[i] = this.readByte());
-        return new String(bytes, StandardCharsets.UTF_8);*
-         */
         return this.inputByteArray.readLargeString();
     }
 

@@ -2,7 +2,8 @@ package com.zyonicsoftware.minereaper.signal.server;
 
 import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.exception.SignalException;
-import com.zyonicsoftware.minereaper.signal.message.RegisteredMessenger;
+import com.zyonicsoftware.minereaper.signal.inspector.IPV4AddressInspector;
+import com.zyonicsoftware.minereaper.signal.message.MessengerRegistry;
 import com.zyonicsoftware.minereaper.signal.message.SignalMessages;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.packet.ahead.UpdateUUIDPacket;
@@ -20,7 +21,7 @@ public class ServerSocketAcceptingThread extends Thread {
 
     private final ServerSocket serverSocket;
     private final List<Client> clients = new ArrayList<>();
-    private final Class<? extends SignalMessages> signalMessages = RegisteredMessenger.get();
+    private final Class<? extends SignalMessages> signalMessages = MessengerRegistry.get();
 
     public ServerSocketAcceptingThread(final ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
@@ -36,13 +37,17 @@ public class ServerSocketAcceptingThread extends Thread {
                     break;
                 } else {
                     final Socket socket = this.serverSocket.accept();
-                    final Client client = new Client(socket);
-                    client.connect();
-                    this.clients.add(client);
-                    this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).acceptSocketConnectionMessage(SignalProvider.getSignalProvider().getAcceptSocketConnectionMessage());
-                    //update connectionUUID on client side
-                    final UpdateUUIDPacket updateUUIDPacket = new UpdateUUIDPacket(client.getConnectionUUID().get());
-                    client.send(updateUUIDPacket);
+                    if (IPV4AddressInspector.getAcceptedIPAddresses().contains(socket.getInetAddress().getHostAddress())) {
+                        final Client client = new Client(socket);
+                        client.connect();
+                        this.clients.add(client);
+                        this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).acceptSocketConnectionMessage(SignalProvider.getSignalProvider().getAcceptSocketConnectionMessage());
+                        //update connectionUUID on client side
+                        final UpdateUUIDPacket updateUUIDPacket = new UpdateUUIDPacket(client.getConnectionUUID().get());
+                        client.send(updateUUIDPacket);
+                    } else {
+                        socket.close();
+                    }
                 }
             }
         } catch (final IOException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException exception) {
@@ -64,7 +69,7 @@ public class ServerSocketAcceptingThread extends Thread {
         //disconnect client
         this.clients.stream().filter(client -> client.getConnectionUUID().get().equals(uuid)).forEach(client -> {
             try {
-                System.out.println("[JavaSocketAPI] Client: " + client.getConnectionUUID().get() + " will be disconnected!");
+                System.out.println(SignalProvider.getSignalProvider().getDisconnectClient().replace("%client%", client.getConnectionUUID().get().toString()));
                 client.disconnect();
             } catch (final IOException exception) {
                 throw new SignalException(exception);
@@ -74,7 +79,7 @@ public class ServerSocketAcceptingThread extends Thread {
 
     public void disconnectAllClients() {
         //disconnect all clients
-        System.out.println("[JavaSocketAPI] All Clients will be disconnected!");
+        System.out.println(SignalProvider.getSignalProvider().getDisconnectAllClients());
         this.clients.forEach(client -> {
             try {
                 if (client != null) {

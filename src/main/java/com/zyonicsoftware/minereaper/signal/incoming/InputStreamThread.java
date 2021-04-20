@@ -3,7 +3,7 @@ package com.zyonicsoftware.minereaper.signal.incoming;
 import com.zyonicsoftware.minereaper.signal.buffer.ReadingByteBuffer;
 import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.exception.SignalException;
-import com.zyonicsoftware.minereaper.signal.message.RegisteredMessenger;
+import com.zyonicsoftware.minereaper.signal.message.MessengerRegistry;
 import com.zyonicsoftware.minereaper.signal.message.SignalMessages;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
@@ -25,7 +25,7 @@ public class InputStreamThread {
     private final Timer timer = new Timer();
     private InputStream finalInputStream;
     final AtomicReference<byte[]> bytes = new AtomicReference<>(null);
-    private final Class<? extends SignalMessages> signalMessages = RegisteredMessenger.get();
+    private final Class<? extends SignalMessages> signalMessages = MessengerRegistry.get();
 
     public InputStreamThread(final Client client) {
         this.client = client;

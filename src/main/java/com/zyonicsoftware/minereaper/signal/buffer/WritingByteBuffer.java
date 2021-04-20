@@ -56,14 +56,7 @@ public class WritingByteBuffer {
     }
 
     public void writeString(final String value) {
-        //check value
-        /*if (!WritingByteBuffer.isValueNull(value)){
-            final byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
-            this.writeInt(bytes.length);
-            for (byte b : bytes) {
-                this.writeByte(b);
-            }
-        }
+        
         //writing string*/
         this.byteBuf.writeLargeString(value);
     }
