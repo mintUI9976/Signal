@@ -73,20 +73,20 @@ public class OutputStreamThread {
                             try {
                                 //receive bytes
                                 final byte[] bytes = writingByteBuffer.toBytes();
-                                if (bytes.length < 255) {
-                                    //check if outputstream is null
-                                    assert OutputStreamThread.this.finalOutputStream != null;
-                                    //write bytes length
-                                    OutputStreamThread.this.finalOutputStream.write(bytes.length);
-                                    //write bytes
-                                    OutputStreamThread.this.finalOutputStream.write(bytes);
-                                    //flush outputStream
-                                    OutputStreamThread.this.finalOutputStream.flush();
-                                    SignalProvider.getSignalProvider().setOutgoingPackets(SignalProvider.getSignalProvider().getOutgoingPackets() + 1);
-                                    OutputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).sendPacketMessage(SignalProvider.getSignalProvider().getOutgoingPacketMessage());
-                                } else {
-                                    OutputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).sendLengthToLargeMessage(SignalProvider.getSignalProvider().getOutgoingLengthToLarge());
-                                }
+                                //if (bytes.length < 255) {
+                                //check if outputstream is null
+                                assert OutputStreamThread.this.finalOutputStream != null;
+                                //write bytes length
+                                OutputStreamThread.this.finalOutputStream.write(bytes.length);
+                                //write bytes
+                                OutputStreamThread.this.finalOutputStream.write(bytes);
+                                //flush outputStream
+                                OutputStreamThread.this.finalOutputStream.flush();
+                                SignalProvider.getSignalProvider().setOutgoingPackets(SignalProvider.getSignalProvider().getOutgoingPackets() + 1);
+                                OutputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).sendPacketMessage(SignalProvider.getSignalProvider().getOutgoingPacketMessage());
+                                //} else {
+                                //OutputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).sendLengthToLargeMessage(SignalProvider.getSignalProvider().getOutgoingLengthToLarge());
+                                //}
                             } catch (final SocketException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException exception) {
                                 throw new SignalException(SignalProvider.getSignalProvider().getOutgoingSocketException(), exception);
                             }
