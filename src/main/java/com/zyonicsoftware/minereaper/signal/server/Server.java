@@ -6,6 +6,7 @@ import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class Server extends Connection {
 
@@ -38,6 +39,8 @@ public class Server extends Connection {
     public void disconnect() throws IOException {
         //disconnect all clients
         this.disconnectAllClients();
+        // destroy server accepting thread
+        this.serverSocketAcceptingThread.interrupt();
         //check if serverSocket is closed
         if (!this.serverSocket.isClosed()) {
             //disconnect serverSocket
@@ -53,6 +56,16 @@ public class Server extends Connection {
     public void sendToAllClients(final Packet packet) {
         //send to all clients
         this.serverSocketAcceptingThread.sendToAllClients(packet);
+    }
+
+    public CompletableFuture<Void> sendToClientAsync(final Packet packet, final UUID uuid) {
+        //send to client
+        return CompletableFuture.runAsync(() -> this.serverSocketAcceptingThread.sendToClient(packet, uuid));
+    }
+
+    public CompletableFuture<Void> sendToAllClientsAsync(final Packet packet) {
+        //send to all clients
+        return CompletableFuture.runAsync(() -> this.serverSocketAcceptingThread.sendToAllClients(packet));
     }
 
     public void disconnectClient(final UUID uuid) throws IOException {

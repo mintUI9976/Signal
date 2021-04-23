@@ -16,6 +16,7 @@ public class SignalProvider {
     private final String incomingPacketMessage;
     private final String incomingSocketCloseMessage;
     private final String acceptSocketConnectionMessage;
+    private final String unAcceptSocketConnectionMessage;
     private final String disconnectClient;
     private final String disconnectAllClients;
     private int outgoingPackets;
@@ -34,10 +35,15 @@ public class SignalProvider {
         this.incomingPacketMessage = this.prefix + "The packet was received successfully.";
         this.incomingSocketCloseMessage = this.prefix + "The client connection will be closed.";
         this.acceptSocketConnectionMessage = this.prefix + "The client connection has been accepted.";
+        this.unAcceptSocketConnectionMessage = this.prefix + "The client connection has been canceled.";
         this.disconnectClient = this.prefix + "Client: %client% will be disconnected.";
         this.disconnectAllClients = this.prefix + "All Clients will be disconnected.";
         this.outgoingPackets = 0;
         this.incomingPackets = 0;
+    }
+
+    public String getUnAcceptSocketConnectionMessage() {
+        return this.unAcceptSocketConnectionMessage;
     }
 
     public String getDisconnectAllClients() {

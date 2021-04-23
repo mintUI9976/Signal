@@ -1,10 +1,10 @@
 package com.zyonicsoftware.minereaper.signal.outgoing;
 
 import com.zyonicsoftware.minereaper.signal.buffer.WritingByteBuffer;
+import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
+import com.zyonicsoftware.minereaper.signal.caller.SignalCaller;
 import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.exception.SignalException;
-import com.zyonicsoftware.minereaper.signal.message.MessengerRegistry;
-import com.zyonicsoftware.minereaper.signal.message.SignalMessages;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
 import com.zyonicsoftware.minereaper.signal.packet.ahead.UpdateUUIDPacket;
@@ -27,7 +27,7 @@ public class OutputStreamThread {
     private final List<Packet> packets = new ArrayList<>();
     private final Timer timer = new Timer();
     private OutputStream finalOutputStream;
-    private final Class<? extends SignalMessages> signalMessages = MessengerRegistry.get();
+    private final Class<? extends SignalCaller> signalCaller = SignalCallRegistry.get();
 
     public OutputStreamThread(final Client client) {
         this.client = client;
@@ -73,20 +73,20 @@ public class OutputStreamThread {
                             try {
                                 //receive bytes
                                 final byte[] bytes = writingByteBuffer.toBytes();
-                                //if (bytes.length < 255) {
-                                //check if outputstream is null
-                                assert OutputStreamThread.this.finalOutputStream != null;
-                                //write bytes length
-                                OutputStreamThread.this.finalOutputStream.write(bytes.length);
-                                //write bytes
-                                OutputStreamThread.this.finalOutputStream.write(bytes);
-                                //flush outputStream
-                                OutputStreamThread.this.finalOutputStream.flush();
-                                SignalProvider.getSignalProvider().setOutgoingPackets(SignalProvider.getSignalProvider().getOutgoingPackets() + 1);
-                                OutputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).sendPacketMessage(SignalProvider.getSignalProvider().getOutgoingPacketMessage());
-                                //} else {
-                                //OutputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).sendLengthToLargeMessage(SignalProvider.getSignalProvider().getOutgoingLengthToLarge());
-                                //}
+                                if (bytes.length < 255) {
+                                    //check if outputstream is null
+                                    assert OutputStreamThread.this.finalOutputStream != null;
+                                    //write bytes length
+                                    OutputStreamThread.this.finalOutputStream.write(bytes.length);
+                                    //write bytes
+                                    OutputStreamThread.this.finalOutputStream.write(bytes);
+                                    //flush outputStream
+                                    OutputStreamThread.this.finalOutputStream.flush();
+                                    SignalProvider.getSignalProvider().setOutgoingPackets(SignalProvider.getSignalProvider().getOutgoingPackets() + 1);
+                                    OutputStreamThread.this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).sendPacketMessage(SignalProvider.getSignalProvider().getOutgoingPacketMessage());
+                                } else {
+                                    OutputStreamThread.this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).sendLengthToLargeMessage(SignalProvider.getSignalProvider().getOutgoingLengthToLarge());
+                                }
                             } catch (final SocketException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException exception) {
                                 throw new SignalException(SignalProvider.getSignalProvider().getOutgoingSocketException(), exception);
                             }

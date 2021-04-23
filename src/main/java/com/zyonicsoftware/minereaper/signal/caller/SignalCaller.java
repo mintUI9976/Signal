@@ -1,10 +1,10 @@
-package com.zyonicsoftware.minereaper.signal.message;
+package com.zyonicsoftware.minereaper.signal.caller;
 
-public abstract class SignalMessages {
+public abstract class SignalCaller {
 
     private final String calledClass;
 
-    public SignalMessages(final String calledClass) {
+    public SignalCaller(final String calledClass) {
         this.calledClass = calledClass;
     }
 
@@ -25,5 +25,11 @@ public abstract class SignalMessages {
     public abstract void receiveSocketCloseMessage(final String message);
 
     public abstract void acceptSocketConnectionMessage(final String message);
+
+    public abstract void unAcceptedSocketConnectionMessage(final String message);
+
+    public abstract void disconnectAllClientMessage(final String message);
+
+    public abstract void disconnectClientMessage(final String message);
 
 }

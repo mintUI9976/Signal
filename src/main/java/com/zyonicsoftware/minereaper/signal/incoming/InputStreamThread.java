@@ -1,10 +1,10 @@
 package com.zyonicsoftware.minereaper.signal.incoming;
 
 import com.zyonicsoftware.minereaper.signal.buffer.ReadingByteBuffer;
+import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
+import com.zyonicsoftware.minereaper.signal.caller.SignalCaller;
 import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.exception.SignalException;
-import com.zyonicsoftware.minereaper.signal.message.MessengerRegistry;
-import com.zyonicsoftware.minereaper.signal.message.SignalMessages;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
 import com.zyonicsoftware.minereaper.signal.signal.SignalProvider;
@@ -25,7 +25,7 @@ public class InputStreamThread {
     private final Timer timer = new Timer();
     private InputStream finalInputStream;
     final AtomicReference<byte[]> bytes = new AtomicReference<>(null);
-    private final Class<? extends SignalMessages> signalMessages = MessengerRegistry.get();
+    private final Class<? extends SignalCaller> signalCaller = SignalCallRegistry.get();
 
     public InputStreamThread(final Client client) {
         this.client = client;
@@ -52,42 +52,42 @@ public class InputStreamThread {
                             final int b = InputStreamThread.this.finalInputStream.read();
                             if (b != -1) {
                                 //check if byte array length smaller then 255 bytes
-                                //if (b < 255) {
-                                //InputStreamThread.this.bytes.set(new byte[b]);
-                                //receive bytes
-                                //InputStreamThread.this.finalInputStream.read(InputStreamThread.this.bytes.get(), 0, b);
-                                final ReadingByteBuffer readingByteBuffer = new ReadingByteBuffer(InputStreamThread.this.finalInputStream.readNBytes(b));
-                                //read packetId
-                                final int packetId = readingByteBuffer.readInt();
+                                if (b < 255) {
+                                    //InputStreamThread.this.bytes.set(new byte[b]);
+                                    //receive bytes
+                                    //InputStreamThread.this.finalInputStream.read(InputStreamThread.this.bytes.get(), 0, b);
+                                    final ReadingByteBuffer readingByteBuffer = new ReadingByteBuffer(InputStreamThread.this.finalInputStream.readNBytes(b));
+                                    //read packetId
+                                    final int packetId = readingByteBuffer.readInt();
 
-                                //check if packet is UpdateUUIDPacket
-                                if (packetId == -2) {
-                                    //read connectionUUID
-                                    final UUID connectionUUID = readingByteBuffer.readUUID();
-                                    //set updated connectionUUID
-                                    InputStreamThread.this.client.getConnectionUUID().set(connectionUUID);
-                                } else {
-                                    //get packet
-                                    final Class<? extends Packet> packet = PacketRegistry.get(packetId);
-
-                                    // check if received packet not null
-                                    if (packet != null) {
+                                    //check if packet is UpdateUUIDPacket
+                                    if (packetId == -2) {
                                         //read connectionUUID
                                         final UUID connectionUUID = readingByteBuffer.readUUID();
-                                        //initialise packet
-                                        packet.getDeclaredConstructor(UUID.class).newInstance(connectionUUID).receive(readingByteBuffer);
-                                        SignalProvider.getSignalProvider().setIncomingPackets(SignalProvider.getSignalProvider().getIncomingPackets() + 1);
-                                        InputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).receivePacketMessage(SignalProvider.getSignalProvider().getIncomingPacketMessage());
+                                        //set updated connectionUUID
+                                        InputStreamThread.this.client.getConnectionUUID().set(connectionUUID);
                                     } else {
-                                        InputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).receivePacketIsNullMessage(SignalProvider.getSignalProvider().getIncomingPacketIsNull());
+                                        //get packet
+                                        final Class<? extends Packet> packet = PacketRegistry.get(packetId);
+
+                                        // check if received packet not null
+                                        if (packet != null) {
+                                            //read connectionUUID
+                                            final UUID connectionUUID = readingByteBuffer.readUUID();
+                                            //initialise packet
+                                            packet.getDeclaredConstructor(UUID.class).newInstance(connectionUUID).receive(readingByteBuffer);
+                                            SignalProvider.getSignalProvider().setIncomingPackets(SignalProvider.getSignalProvider().getIncomingPackets() + 1);
+                                            InputStreamThread.this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).receivePacketMessage(SignalProvider.getSignalProvider().getIncomingPacketMessage());
+                                        } else {
+                                            InputStreamThread.this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).receivePacketIsNullMessage(SignalProvider.getSignalProvider().getIncomingPacketIsNull());
+                                        }
                                     }
+                                } else {
+                                    InputStreamThread.this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).receiveLengthToLargeMessage(SignalProvider.getSignalProvider().getIncomingLengthToLarge());
                                 }
-                                //} else {
-                                // InputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).receiveLengthToLargeMessage(SignalProvider.getSignalProvider().getIncomingLengthToLarge());
-                                //  }
                             } else {
                                 //close socket
-                                InputStreamThread.this.signalMessages.getDeclaredConstructor(String.class).newInstance(this.toString()).receiveSocketCloseMessage(SignalProvider.getSignalProvider().getIncomingSocketCloseMessage());
+                                InputStreamThread.this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).receiveSocketCloseMessage(SignalProvider.getSignalProvider().getIncomingSocketCloseMessage());
                                 InputStreamThread.this.socket.close();
                             }
                         }

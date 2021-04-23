@@ -1,4 +1,4 @@
-# Signal ![Version Status ](https://img.shields.io/badge/JDK-11-red?style=for-the-badge) ![Version Status ](https://img.shields.io/badge/RELEASE-v0.2.9-blue?style=for-the-badge)
+# Signal ![Version Status ](https://img.shields.io/badge/JDK-11-red?style=for-the-badge) ![Version Status ](https://img.shields.io/badge/RELEASE-v0.3.1-blue?style=for-the-badge)
 
 ## An api for java with the native Java socket technology and the [boonproject](https://github.com/boonproject/boon).
 
@@ -20,4 +20,4 @@ Download the latest jar file from the releases tab and implement it in your proj
 file when building your project.
 ________________________________________
 
-### Examples later....
+### Examples later...
