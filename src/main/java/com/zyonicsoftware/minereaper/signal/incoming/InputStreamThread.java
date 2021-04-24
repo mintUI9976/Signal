@@ -53,10 +53,10 @@ public class InputStreamThread {
                             if (b != -1) {
                                 //check if byte array length smaller then 255 bytes
                                 if (b < 255) {
-                                    //InputStreamThread.this.bytes.set(new byte[b]);
+                                    InputStreamThread.this.bytes.set(new byte[b]);
                                     //receive bytes
-                                    //InputStreamThread.this.finalInputStream.read(InputStreamThread.this.bytes.get(), 0, b);
-                                    final ReadingByteBuffer readingByteBuffer = new ReadingByteBuffer(InputStreamThread.this.finalInputStream.readNBytes(b));
+                                    InputStreamThread.this.finalInputStream.read(InputStreamThread.this.bytes.get(), 0, b);
+                                    final ReadingByteBuffer readingByteBuffer = new ReadingByteBuffer(InputStreamThread.this.bytes.get());
                                     //read packetId
                                     final int packetId = readingByteBuffer.readInt();
 
