@@ -38,7 +38,7 @@ public class Server extends Connection {
     @Override
     public void disconnect() throws IOException {
         //disconnect all clients
-        this.disconnectAllClients();
+        //this.disconnectAllClients();
         // destroy server accepting thread
         this.serverSocketAcceptingThread.interrupt();
         //check if serverSocket is closed
@@ -68,12 +68,12 @@ public class Server extends Connection {
         return CompletableFuture.runAsync(() -> this.serverSocketAcceptingThread.sendToAllClients(packet));
     }
 
-    public void disconnectClient(final UUID uuid) throws IOException {
+    public void disconnectClient(final UUID uuid) {
         //disconnect client
         this.serverSocketAcceptingThread.disconnectClient(uuid);
     }
 
-    public void disconnectAllClients() throws IOException {
+    public void disconnectAllClients() {
         //disconnect all clients
         this.serverSocketAcceptingThread.disconnectAllClients();
     }
