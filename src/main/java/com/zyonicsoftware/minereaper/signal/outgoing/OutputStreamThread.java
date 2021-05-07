@@ -79,7 +79,7 @@ public class OutputStreamThread {
                                 this.finalOutputStream.write(bytes);
                                 //flush outputStream
                                 this.finalOutputStream.flush();
-                                SignalProvider.getSignalProvider().setOutgoingPackets(SignalProvider.getSignalProvider().getOutgoingPackets() + 1);
+                                //SignalProvider.getSignalProvider().setOutgoingPackets(SignalProvider.getSignalProvider().getOutgoingPackets() + 1);
                                 this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).sendPacketMessage(SignalProvider.getSignalProvider().getOutgoingPacketMessage());
                             } else {
                                 this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).sendLengthToLargeMessage(SignalProvider.getSignalProvider().getOutgoingLengthToLarge());
