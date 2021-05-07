@@ -1,6 +1,7 @@
 package com.zyonicsoftware.minereaper.signal.client;
 
 import com.zyonicsoftware.minereaper.signal.connection.Connection;
+import com.zyonicsoftware.minereaper.signal.executor.Factory;
 import com.zyonicsoftware.minereaper.signal.incoming.InputStreamThread;
 import com.zyonicsoftware.minereaper.signal.outgoing.OutputStreamThread;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
@@ -58,6 +59,7 @@ public class Client extends Connection {
         //interrupt reading and writing
         this.inputStreamThread.interrupt();
         this.outputStreamThread.interrupt();
+        Factory.getScheduledExecutorService().shutdownNow();
         //check if socket is closed
         if (!this.socket.isClosed()) {
             //closed socket
