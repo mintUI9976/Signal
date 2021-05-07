@@ -56,7 +56,7 @@ public class WritingByteBuffer {
     }
 
     public void writeString(final String value) {
-        
+
         //writing string*/
         this.byteBuf.writeLargeString(value);
     }
