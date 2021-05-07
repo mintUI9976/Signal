@@ -16,15 +16,14 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
 public class OutputStreamThread {
 
     private final Client client;
     private final Socket socket;
-    private final List<Packet> packets = new ArrayList<>();
+    private final LinkedList<Packet> packets = new LinkedList<>();
     private OutputStream finalOutputStream;
     private final Class<? extends SignalCaller> signalCaller = SignalCallRegistry.get();
 
