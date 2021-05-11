@@ -90,8 +90,8 @@ public class InputStreamThread {
                                 InputStreamThread.this.socket.close();
                             }
                         }
-                    } catch (final InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | IOException exception) {
-                        throw new SignalException(SignalProvider.getSignalProvider().getIncomingInputThrowsAnException(), exception);
+                    } catch (final InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | IOException ignored) {
+                        
                     }
                 }
             }, 0, 1);

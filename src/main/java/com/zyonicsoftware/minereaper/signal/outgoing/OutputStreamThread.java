@@ -87,8 +87,8 @@ public class OutputStreamThread {
                                 } else {
                                     OutputStreamThread.this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).sendLengthToLargeMessage(SignalProvider.getSignalProvider().getOutgoingLengthToLarge());
                                 }
-                            } catch (final SocketException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException exception) {
-                                throw new SignalException(SignalProvider.getSignalProvider().getOutgoingSocketException(), exception);
+                            } catch (final SocketException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException ignored) {
+
                             }
                         }
                     }
