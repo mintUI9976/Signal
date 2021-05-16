@@ -9,6 +9,7 @@ public class SignalProvider {
     private final String incomingLengthToLarge;
     private final String incomingPacketIsNull;
     private final String incomingInputThrowsAnException;
+    private final String canceledJobThrowsAnException;
     private final String outgoingLengthToLarge;
     private final String outgoingSocketException;
     private final String outputStreamThrowsAnException;
@@ -19,14 +20,14 @@ public class SignalProvider {
     private final String unAcceptSocketConnectionMessage;
     private final String disconnectClient;
     private final String disconnectAllClients;
-    private int outgoingPackets;
-    private int incomingPackets;
+    private final String canceledJobMessage;
 
     {
         this.prefix = "Signal > ";
         this.incomingLengthToLarge = this.prefix + "The received byte array length is larger than 255.";
         this.incomingPacketIsNull = this.prefix + "The received packet is null, check your PacketRegistry.";
         this.incomingInputThrowsAnException = this.prefix + "An accepted byte array throws an exception, please restart your service.";
+        this.canceledJobThrowsAnException = this.prefix + "An canceled Job throws an exception, please restart your service.";
         this.inputStreamThrowsAnException = this.prefix + "The input stream cannot be opened or is null.";
         this.outgoingLengthToLarge = this.prefix + "The sending byte array length is larger than 255.";
         this.outgoingSocketException = this.prefix + "The sending bytes can not be written or flushed.";
@@ -38,8 +39,15 @@ public class SignalProvider {
         this.unAcceptSocketConnectionMessage = this.prefix + "The client connection has been canceled.";
         this.disconnectClient = this.prefix + "Client: %client% will be disconnected.";
         this.disconnectAllClients = this.prefix + "All Clients will be disconnected.";
-        this.outgoingPackets = 0;
-        this.incomingPackets = 0;
+        this.canceledJobMessage = this.prefix + "Job: %job% has been canceled.";
+    }
+
+    public String getCanceledJobThrowsAnException() {
+        return this.canceledJobThrowsAnException;
+    }
+
+    public String getCanceledJobMessage() {
+        return this.canceledJobMessage;
     }
 
     public String getUnAcceptSocketConnectionMessage() {
@@ -68,22 +76,6 @@ public class SignalProvider {
 
     public String getOutgoingPacketMessage() {
         return this.outgoingPacketMessage;
-    }
-
-    public void setIncomingPackets(final int incomingPackets) {
-        this.incomingPackets = incomingPackets;
-    }
-
-    public int getIncomingPackets() {
-        return this.incomingPackets;
-    }
-
-    public void setOutgoingPackets(final int outgoingPackets) {
-        this.outgoingPackets = outgoingPackets;
-    }
-
-    public int getOutgoingPackets() {
-        return this.outgoingPackets;
     }
 
     public String getOutputStreamThrowsAnException() {

@@ -1,5 +1,6 @@
 package com.zyonicsoftware.minereaper.signal.server;
 
+import com.coreoz.wisp.Scheduler;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCaller;
 import com.zyonicsoftware.minereaper.signal.client.Client;
@@ -22,10 +23,13 @@ public class ServerSocketAcceptingThread extends Thread {
 
     private final ServerSocket serverSocket;
     private final List<Client> clients = new ArrayList<>();
-    private final Class<? extends SignalCaller> signalCaller = SignalCallRegistry.get();
+    private final Class<? extends SignalCaller> signalCaller;
+    private final Scheduler scheduler;
 
-    public ServerSocketAcceptingThread(final ServerSocket serverSocket) {
+    public ServerSocketAcceptingThread(final ServerSocket serverSocket, final Scheduler scheduler) {
         this.serverSocket = serverSocket;
+        this.signalCaller = SignalCallRegistry.getReferenceCaller();
+        this.scheduler = scheduler;
     }
 
     @Override
@@ -39,7 +43,7 @@ public class ServerSocketAcceptingThread extends Thread {
                 } else {
                     final Socket socket = this.serverSocket.accept();
                     if (IPV4AddressInspector.getAcceptedIPAddresses().contains(socket.getInetAddress().getHostAddress())) {
-                        final Client client = new Client(socket);
+                        final Client client = new Client(socket, this.signalCaller, this.scheduler);
                         client.connect();
                         this.clients.add(client);
                         this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).acceptSocketConnectionMessage(SignalProvider.getSignalProvider().getAcceptSocketConnectionMessage());
@@ -47,7 +51,7 @@ public class ServerSocketAcceptingThread extends Thread {
                         final UpdateUUIDPacket updateUUIDPacket = new UpdateUUIDPacket(client.getConnectionUUID().get());
                         client.send(updateUUIDPacket);
                     } else {
-                        this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).unAcceptedSocketConnectionMessage(SignalProvider.getSignalProvider().getAcceptSocketConnectionMessage());
+                        this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).unAcceptedSocketConnectionMessage(SignalProvider.getSignalProvider().getUnAcceptSocketConnectionMessage());
                         socket.close();
                     }
                 }

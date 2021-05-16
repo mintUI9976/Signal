@@ -1,5 +1,9 @@
 package com.zyonicsoftware.minereaper.signal.server;
 
+import com.coreoz.wisp.Scheduler;
+import com.coreoz.wisp.SchedulerConfig;
+import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
+import com.zyonicsoftware.minereaper.signal.caller.SignalCaller;
 import com.zyonicsoftware.minereaper.signal.connection.Connection;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 
@@ -13,15 +17,23 @@ public class Server extends Connection {
     private final int port;
     private ServerSocket serverSocket;
     private ServerSocketAcceptingThread serverSocketAcceptingThread;
+    private final Scheduler scheduler;
 
     public int getPort() {
         return this.port;
     }
 
-    public Server(final int port) {
+    public Server(final int port, final Class<? extends SignalCaller> signalCaller, final Scheduler scheduler) {
         this.port = port;
+        SignalCallRegistry.registerReferenceCaller(signalCaller);
+        this.scheduler = scheduler;
     }
 
+    public Server(final int port, final Class<? extends SignalCaller> signalCaller, final int minThreads, final int maxThreads) {
+        this.port = port;
+        SignalCallRegistry.registerReferenceCaller(signalCaller);
+        this.scheduler = new Scheduler(SchedulerConfig.builder().minThreads(minThreads).maxThreads(maxThreads).build());
+    }
 
     @Override
     public void connect() throws IOException {
@@ -31,7 +43,7 @@ public class Server extends Connection {
             this.serverSocket = new ServerSocket(this.port);
         }
         //start accepting clients
-        this.serverSocketAcceptingThread = new ServerSocketAcceptingThread(this.serverSocket);
+        this.serverSocketAcceptingThread = new ServerSocketAcceptingThread(this.serverSocket, this.scheduler);
         this.serverSocketAcceptingThread.start();
     }
 
@@ -71,6 +83,10 @@ public class Server extends Connection {
     public void disconnectClient(final UUID uuid) {
         //disconnect client
         this.serverSocketAcceptingThread.disconnectClient(uuid);
+    }
+
+    public Scheduler getScheduler() {
+        return this.scheduler;
     }
 
     public void disconnectAllClients() {

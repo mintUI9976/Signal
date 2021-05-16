@@ -32,4 +32,6 @@ public abstract class SignalCaller {
 
     public abstract void disconnectClientMessage(final String message);
 
+    public abstract void canceledJob(final String message);
+
 }

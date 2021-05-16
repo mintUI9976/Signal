@@ -1,5 +1,9 @@
 package com.zyonicsoftware.minereaper.signal.client;
 
+import com.coreoz.wisp.Scheduler;
+import com.coreoz.wisp.SchedulerConfig;
+import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
+import com.zyonicsoftware.minereaper.signal.caller.SignalCaller;
 import com.zyonicsoftware.minereaper.signal.connection.Connection;
 import com.zyonicsoftware.minereaper.signal.incoming.InputStreamThread;
 import com.zyonicsoftware.minereaper.signal.outgoing.OutputStreamThread;
@@ -15,6 +19,7 @@ public class Client extends Connection {
     private Socket socket;
     private InputStreamThread inputStreamThread;
     private OutputStreamThread outputStreamThread;
+    private final Scheduler scheduler;
 
     public String getHostname() {
         return this.hostname;
@@ -28,13 +33,24 @@ public class Client extends Connection {
         return this.socket;
     }
 
-    public Client(final String hostname, final int port) {
+    public Client(final String hostname, final int port, final Class<? extends SignalCaller> signalCaller, final Scheduler scheduler) {
         this.hostname = hostname;
         this.port = port;
+        SignalCallRegistry.registerReferenceCaller(signalCaller);
+        this.scheduler = scheduler;
     }
 
-    public Client(final Socket socket) {
+    public Client(final String hostname, final int port, final Class<? extends SignalCaller> signalCaller) {
+        this.hostname = hostname;
+        this.port = port;
+        SignalCallRegistry.registerReferenceCaller(signalCaller);
+        this.scheduler = new Scheduler(SchedulerConfig.builder().minThreads(1).maxThreads(2).build());
+    }
+
+    public Client(final Socket socket, final Class<? extends SignalCaller> signalCaller, final Scheduler scheduler) {
         this.socket = socket;
+        SignalCallRegistry.registerReferenceCaller(signalCaller);
+        this.scheduler = scheduler;
     }
 
 
@@ -44,7 +60,6 @@ public class Client extends Connection {
         if (this.socket == null) {
             //initialise socket
             this.socket = new Socket(this.hostname, this.port);
-            this.socket.setKeepAlive(true);
         }
         //start reading and writing
         this.inputStreamThread = new InputStreamThread(this);
@@ -58,12 +73,16 @@ public class Client extends Connection {
         //interrupt reading and writing
         this.inputStreamThread.interrupt();
         this.outputStreamThread.interrupt();
-        
+
         //check if socket is closed
         if (!this.socket.isClosed()) {
             //closed socket
             this.socket.close();
         }
+    }
+
+    public Scheduler getScheduler() {
+        return this.scheduler;
     }
 
     public void send(final Packet packet) {
