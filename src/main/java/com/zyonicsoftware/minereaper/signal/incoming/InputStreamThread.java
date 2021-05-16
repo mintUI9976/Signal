@@ -23,6 +23,7 @@ public class InputStreamThread {
     private final Socket socket;
     private InputStream finalInputStream;
     private final Class<? extends SignalCaller> signalCaller;
+    private final String jobName = "incoming_packets_" + UUID.randomUUID().toString();
 
     public InputStreamThread(final Client client) {
         this.client = client;
@@ -34,7 +35,7 @@ public class InputStreamThread {
         //initialise inputStream
         try {
             this.finalInputStream = this.socket.getInputStream();
-            this.client.getScheduler().schedule("incoming_packets", () -> {
+            this.client.getScheduler().schedule(this.jobName, () -> {
                 try {
                     if (this.socket.isClosed()) {
                         //interrupt thread
@@ -99,8 +100,8 @@ public class InputStreamThread {
     public void interrupt() {
         try {
             this.finalInputStream.close();
-            this.client.getScheduler().findJob("incoming_packets").ifPresent(job -> job.threadRunningJob().interrupt());
-            this.client.getScheduler().cancel("incoming_packets").thenAccept(job -> {
+            this.client.getScheduler().findJob(this.jobName).ifPresent(job -> job.threadRunningJob().interrupt());
+            this.client.getScheduler().cancel(this.jobName).thenAccept(job -> {
                 try {
                     this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).canceledJob(SignalProvider.getSignalProvider().getCanceledJobMessage().replaceAll("%job%", job.name()));
                 } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException exception) {

@@ -19,6 +19,7 @@ import java.net.SocketException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class OutputStreamThread {
 
@@ -27,6 +28,7 @@ public class OutputStreamThread {
     private final List<Packet> packets = new ArrayList<>();
     private OutputStream finalOutputStream;
     private final Class<? extends SignalCaller> signalCaller;
+    private final String jobName = "outgoing_packets_" + UUID.randomUUID().toString();
 
     public OutputStreamThread(final Client client) {
         this.client = client;
@@ -38,7 +40,7 @@ public class OutputStreamThread {
         //initialise outputStream
         this.finalOutputStream = this.socket.getOutputStream();
         //start sending send byte arrays
-        this.client.getScheduler().schedule("outgoing_packets", () -> {
+        this.client.getScheduler().schedule(this.jobName, () -> {
             try {
                 if (this.socket.isClosed()) {
                     //interrupt thread
@@ -99,8 +101,8 @@ public class OutputStreamThread {
     public void interrupt() {
         try {
             this.finalOutputStream.close();
-            this.client.getScheduler().findJob("outgoing_packets").ifPresent(job -> job.threadRunningJob().interrupt());
-            this.client.getScheduler().cancel("outgoing_packets").thenAccept(job -> {
+            this.client.getScheduler().findJob(this.jobName).ifPresent(job -> job.threadRunningJob().interrupt());
+            this.client.getScheduler().cancel(this.jobName).thenAccept(job -> {
                 try {
                     this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).canceledJob(SignalProvider.getSignalProvider().getCanceledJobMessage().replaceAll("%job%", job.name()));
                 } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException exception) {
