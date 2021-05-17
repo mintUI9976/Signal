@@ -92,7 +92,7 @@ public class InputStreamThread {
                 } catch (final InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | IOException exception) {
                     throw new SignalException(SignalProvider.getSignalProvider().getIncomingInputThrowsAnException(), exception);
                 }
-            }, Schedules.fixedDelaySchedule(Duration.ofMillis(50)));
+            }, Schedules.fixedDelaySchedule(Duration.ofMillis(10)));
         } catch (final IOException exception) {
             throw new SignalException(SignalProvider.getSignalProvider().getInputStreamThrowsAnException(), exception);
         }

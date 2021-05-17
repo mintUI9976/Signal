@@ -91,7 +91,7 @@ public class OutputStreamThread {
                 } catch (final IOException | NullPointerException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException exception) {
                     throw new SignalException(SignalProvider.getSignalProvider().getOutputStreamThrowsAnException(), exception);
                 }
-            }, Schedules.fixedDelaySchedule(Duration.ofMillis(50)));
+            }, Schedules.fixedDelaySchedule(Duration.ofMillis(10)));
         } catch (final IOException exception) {
             throw new SignalException(SignalProvider.getSignalProvider().getOutputStreamThrowsAnException(), exception);
         }
