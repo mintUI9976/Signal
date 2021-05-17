@@ -43,7 +43,7 @@ public class InputStreamThread {
                         return;
                     }
                     //check if finalInputStream is null
-                    assert this.finalInputStream != null;
+                    
                     if (this.finalInputStream.available() > 0) {
                         final int b = this.finalInputStream.read();
                         if (b != -1) {

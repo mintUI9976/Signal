@@ -44,7 +44,7 @@ public class Server extends Connection {
         }
         //start accepting clients
         this.serverSocketAcceptingThread = new ServerSocketAcceptingThread(this.serverSocket, this.scheduler);
-        this.serverSocketAcceptingThread.start();
+        this.serverSocketAcceptingThread.run();
     }
 
     @Override

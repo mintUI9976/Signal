@@ -40,11 +40,11 @@ public class Client extends Connection {
         this.scheduler = scheduler;
     }
 
-    public Client(final String hostname, final int port, final Class<? extends SignalCaller> signalCaller) {
+    public Client(final String hostname, final int port, final Class<? extends SignalCaller> signalCaller, final int minThreads, final int maxThreads) {
         this.hostname = hostname;
         this.port = port;
         SignalCallRegistry.registerReferenceCaller(signalCaller);
-        this.scheduler = new Scheduler(SchedulerConfig.builder().minThreads(1).maxThreads(2).build());
+        this.scheduler = new Scheduler(SchedulerConfig.builder().minThreads(minThreads).maxThreads(maxThreads).build());
     }
 
     public Client(final Socket socket, final Class<? extends SignalCaller> signalCaller, final Scheduler scheduler) {

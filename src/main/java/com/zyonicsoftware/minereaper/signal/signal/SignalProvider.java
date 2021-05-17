@@ -1,5 +1,7 @@
 package com.zyonicsoftware.minereaper.signal.signal;
 
+import java.util.concurrent.TimeUnit;
+
 public class SignalProvider {
 
     private static final SignalProvider signalProvider = new SignalProvider();
@@ -108,6 +110,14 @@ public class SignalProvider {
 
     public String getIncomingInputThrowsAnException() {
         return this.incomingInputThrowsAnException;
+    }
+
+    public void sleepCurrentThread(final long millis) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(millis);
+        } catch (final InterruptedException ignored) {
+
+        }
     }
 
     public static SignalProvider getSignalProvider() {

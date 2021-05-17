@@ -1,6 +1,7 @@
 package com.zyonicsoftware.minereaper.signal.server;
 
 import com.coreoz.wisp.Scheduler;
+import com.coreoz.wisp.schedule.Schedules;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCaller;
 import com.zyonicsoftware.minereaper.signal.client.Client;
@@ -14,17 +15,19 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-public class ServerSocketAcceptingThread extends Thread {
+public class ServerSocketAcceptingThread {
 
     private final ServerSocket serverSocket;
     private final List<Client> clients = new ArrayList<>();
     private final Class<? extends SignalCaller> signalCaller;
     private final Scheduler scheduler;
+    private final String jobName = "client_acceptor";
 
     public ServerSocketAcceptingThread(final ServerSocket serverSocket, final Scheduler scheduler) {
         this.serverSocket = serverSocket;
@@ -32,33 +35,43 @@ public class ServerSocketAcceptingThread extends Thread {
         this.scheduler = scheduler;
     }
 
-    @Override
     public void run() {
-        super.run();
-        try {
-            while (true) {
+        this.scheduler.schedule(this.jobName, () -> {
+            try {
                 if (this.serverSocket.isClosed()) {
                     this.interrupt();
-                    break;
-                } else {
-                    final Socket socket = this.serverSocket.accept();
-                    if (IPV4AddressInspector.getAcceptedIPAddresses().contains(socket.getInetAddress().getHostAddress())) {
-                        final Client client = new Client(socket, this.signalCaller, this.scheduler);
-                        client.connect();
-                        this.clients.add(client);
-                        this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).acceptSocketConnectionMessage(SignalProvider.getSignalProvider().getAcceptSocketConnectionMessage());
-                        //update connectionUUID on client side
-                        final UpdateUUIDPacket updateUUIDPacket = new UpdateUUIDPacket(client.getConnectionUUID().get());
-                        client.send(updateUUIDPacket);
-                    } else {
-                        this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).unAcceptedSocketConnectionMessage(SignalProvider.getSignalProvider().getUnAcceptSocketConnectionMessage());
-                        socket.close();
-                    }
+                    return;
                 }
+                final Socket socket = this.serverSocket.accept();
+                if (IPV4AddressInspector.getAcceptedIPAddresses().contains(socket.getInetAddress().getHostAddress())) {
+                    final Client client = new Client(socket, this.signalCaller, this.scheduler);
+                    client.connect();
+                    this.clients.add(client);
+                    this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).acceptSocketConnectionMessage(SignalProvider.getSignalProvider().getAcceptSocketConnectionMessage());
+                    //update connectionUUID on client side
+                    final UpdateUUIDPacket updateUUIDPacket = new UpdateUUIDPacket(client.getConnectionUUID().get());
+                    client.send(updateUUIDPacket);
+                } else {
+                    this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).unAcceptedSocketConnectionMessage(SignalProvider.getSignalProvider().getUnAcceptSocketConnectionMessage());
+                    socket.close();
+                }
+
+            } catch (final IOException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException exception) {
+                throw new SignalException(exception);
             }
-        } catch (final IOException | InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException exception) {
-            throw new SignalException(exception);
-        }
+        }, Schedules.fixedDelaySchedule(Duration.ofMillis(1)));
+
+    }
+
+    public void interrupt() {
+        this.scheduler.findJob(this.jobName).ifPresent(job -> job.threadRunningJob().interrupt());
+        this.scheduler.cancel(this.jobName).thenAccept(job -> {
+            try {
+                this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).canceledJob(SignalProvider.getSignalProvider().getCanceledJobMessage().replaceAll("%job%", job.name()));
+            } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException exception) {
+                throw new SignalException(SignalProvider.getSignalProvider().getCanceledJobThrowsAnException(), exception);
+            }
+        });
     }
 
     public void sendToClient(final Packet packet, final UUID uuid) {
