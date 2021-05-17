@@ -1,6 +1,5 @@
 package com.zyonicsoftware.minereaper.signal.incoming;
 
-import com.coreoz.wisp.Job;
 import com.coreoz.wisp.schedule.Schedules;
 import com.zyonicsoftware.minereaper.signal.buffer.ReadingByteBuffer;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
@@ -90,9 +89,8 @@ public class InputStreamThread {
                             InputStreamThread.this.socket.close();
                         }
                     }
-
                 } catch (final InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | IOException exception) {
-                    throw new SignalException(SignalProvider.getSignalProvider().getInputStreamThrowsAnException(), exception);
+                    throw new SignalException(SignalProvider.getSignalProvider().getIncomingInputThrowsAnException(), exception);
                 }
             }, Schedules.fixedDelaySchedule(Duration.ofMillis(50)));
         } catch (final IOException exception) {
@@ -102,17 +100,14 @@ public class InputStreamThread {
     }
 
     public void interrupt() {
-        try {
-            this.finalInputStream.close();
-            this.client.getScheduler().findJob(this.jobName).ifPresent(job -> job.threadRunningJob().interrupt());
-            final Job job = this.client.getScheduler().cancel(this.jobName).toCompletableFuture().join();
+        this.client.getScheduler().findJob(this.jobName).ifPresent(job -> job.threadRunningJob().interrupt());
+        this.client.getScheduler().cancel(this.jobName).thenAccept(job -> {
             try {
                 this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).canceledJob(SignalProvider.getSignalProvider().getCanceledJobMessage().replaceAll("%job%", job.name()));
-            } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException exception) {
-                throw new SignalException(SignalProvider.getSignalProvider().getCanceledJobThrowsAnException(), exception);
+                this.finalInputStream.close();
+            } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | IOException exception) {
+                throw new SignalException(SignalProvider.getSignalProvider().getCanceledJobThrowsAnException() + " | " + SignalProvider.getSignalProvider().getInputStreamThrowsAnException(), exception);
             }
-        } catch (final IOException exception) {
-            throw new SignalException(exception);
-        }
+        });
     }
 }
