@@ -1,5 +1,6 @@
 package com.zyonicsoftware.minereaper.signal.incoming;
 
+import com.coreoz.wisp.Job;
 import com.coreoz.wisp.schedule.Schedules;
 import com.zyonicsoftware.minereaper.signal.buffer.ReadingByteBuffer;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
@@ -104,13 +105,12 @@ public class InputStreamThread {
         try {
             this.finalInputStream.close();
             this.client.getScheduler().findJob(this.jobName).ifPresent(job -> job.threadRunningJob().interrupt());
-            this.client.getScheduler().cancel(this.jobName).thenAccept(job -> {
-                try {
-                    this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).canceledJob(SignalProvider.getSignalProvider().getCanceledJobMessage().replaceAll("%job%", job.name()));
-                } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException exception) {
-                    throw new SignalException(SignalProvider.getSignalProvider().getCanceledJobThrowsAnException(), exception);
-                }
-            });
+            final Job job = this.client.getScheduler().cancel(this.jobName).toCompletableFuture().join();
+            try {
+                this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).canceledJob(SignalProvider.getSignalProvider().getCanceledJobMessage().replaceAll("%job%", job.name()));
+            } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException exception) {
+                throw new SignalException(SignalProvider.getSignalProvider().getCanceledJobThrowsAnException(), exception);
+            }
         } catch (final IOException exception) {
             throw new SignalException(exception);
         }

@@ -1,5 +1,6 @@
 package com.zyonicsoftware.minereaper.signal.server;
 
+import com.coreoz.wisp.Job;
 import com.coreoz.wisp.Scheduler;
 import com.coreoz.wisp.schedule.Schedules;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
@@ -65,13 +66,12 @@ public class ServerSocketAcceptingThread {
 
     public void interrupt() {
         this.scheduler.findJob(this.jobName).ifPresent(job -> job.threadRunningJob().interrupt());
-        this.scheduler.cancel(this.jobName).thenAccept(job -> {
-            try {
-                this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).canceledJob(SignalProvider.getSignalProvider().getCanceledJobMessage().replaceAll("%job%", job.name()));
-            } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException exception) {
-                throw new SignalException(SignalProvider.getSignalProvider().getCanceledJobThrowsAnException(), exception);
-            }
-        });
+        final Job job = this.scheduler.cancel(this.jobName).toCompletableFuture().join();
+        try {
+            this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).canceledJob(SignalProvider.getSignalProvider().getCanceledJobMessage().replaceAll("%job%", job.name()));
+        } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException exception) {
+            throw new SignalException(SignalProvider.getSignalProvider().getCanceledJobThrowsAnException(), exception);
+        }
     }
 
     public void sendToClient(final Packet packet, final UUID uuid) {
