@@ -100,14 +100,18 @@ public class InputStreamThread {
     }
 
     public void interrupt() {
-        this.client.getScheduler().findJob(this.jobName).ifPresent(job -> job.threadRunningJob().interrupt());
-        this.client.getScheduler().cancel(this.jobName).thenAccept(job -> {
-            try {
-                this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).canceledJob(SignalProvider.getSignalProvider().getCanceledJobMessage().replaceAll("%job%", job.name()));
-                this.finalInputStream.close();
-            } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | IOException exception) {
-                throw new SignalException(SignalProvider.getSignalProvider().getCanceledJobThrowsAnException() + " | " + SignalProvider.getSignalProvider().getInputStreamThrowsAnException(), exception);
-            }
-        });
+        try {
+            this.finalInputStream.close();
+            Thread.currentThread().interrupt();
+            this.client.getScheduler().cancel(this.jobName).thenAccept(job -> {
+                try {
+                    this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).canceledJob(SignalProvider.getSignalProvider().getCanceledJobMessage().replaceAll("%job%", job.name()));
+                } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException exception) {
+                    throw new SignalException(SignalProvider.getSignalProvider().getCanceledJobThrowsAnException(), exception);
+                }
+            });
+        } catch (final IOException exception) {
+            throw new SignalException(SignalProvider.getSignalProvider().getIncomingInputThrowsAnException(), exception);
+        }
     }
 }

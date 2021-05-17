@@ -64,7 +64,7 @@ public class ServerSocketAcceptingThread {
     }
 
     public void interrupt() {
-        this.scheduler.findJob(this.jobName).ifPresent(job -> job.threadRunningJob().interrupt());
+        Thread.currentThread().interrupt();
         this.scheduler.cancel(this.jobName).thenAccept(job -> {
             try {
                 this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).canceledJob(SignalProvider.getSignalProvider().getCanceledJobMessage().replaceAll("%job%", job.name()));
