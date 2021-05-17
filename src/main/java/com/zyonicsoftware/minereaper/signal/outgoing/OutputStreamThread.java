@@ -48,7 +48,8 @@ public class OutputStreamThread {
                     return;
                 }
                 //skip when no packets available to send
-                while (!this.packets.isEmpty()) {
+                SignalProvider.getSignalProvider().sleepCurrentThread(1000);
+                if (!this.packets.isEmpty()) {
                     //get next packet available to send
                     final Packet packet = this.packets.get(0);
                     //check if packet is valid

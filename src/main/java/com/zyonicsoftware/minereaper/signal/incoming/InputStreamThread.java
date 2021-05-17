@@ -43,7 +43,8 @@ public class InputStreamThread {
                         return;
                     }
                     //check if finalInputStream is null
-                    while (this.finalInputStream.available() > 0) {
+                    SignalProvider.getSignalProvider().sleepCurrentThread(1000);
+                    if (this.finalInputStream.available() > 0) {
                         final int b = this.finalInputStream.read();
                         if (b != -1) {
                             //check if byte array length smaller then 255 bytes
@@ -86,6 +87,7 @@ public class InputStreamThread {
                             this.socket.close();
                         }
                     }
+
                 } catch (final InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException | IOException ignored) {
 
                 }
