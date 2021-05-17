@@ -43,8 +43,7 @@ public class InputStreamThread {
                         return;
                     }
                     //check if finalInputStream is null
-                    
-                    if (this.finalInputStream.available() > 0) {
+                    while (this.finalInputStream.available() > 0) {
                         final int b = this.finalInputStream.read();
                         if (b != -1) {
                             //check if byte array length smaller then 255 bytes
