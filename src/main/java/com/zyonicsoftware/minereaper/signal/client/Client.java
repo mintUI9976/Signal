@@ -20,6 +20,7 @@ public class Client extends Connection {
     private InputStreamThread inputStreamThread;
     private OutputStreamThread outputStreamThread;
     private final Scheduler scheduler;
+    private final long scheduleDelay;
 
     public String getHostname() {
         return this.hostname;
@@ -33,24 +34,31 @@ public class Client extends Connection {
         return this.socket;
     }
 
-    public Client(final String hostname, final int port, final Class<? extends SignalCaller> signalCaller, final Scheduler scheduler) {
+    public long getScheduleDelay() {
+        return this.scheduleDelay;
+    }
+
+    public Client(final String hostname, final int port, final Class<? extends SignalCaller> signalCaller, final Scheduler scheduler, final long scheduleDelay) {
         this.hostname = hostname;
         this.port = port;
         SignalCallRegistry.registerReferenceCaller(signalCaller);
         this.scheduler = scheduler;
+        this.scheduleDelay = scheduleDelay;
     }
 
-    public Client(final String hostname, final int port, final Class<? extends SignalCaller> signalCaller, final int minThreads, final int maxThreads) {
+    public Client(final String hostname, final int port, final Class<? extends SignalCaller> signalCaller, final int minThreads, final int maxThreads, final long scheduleDelay) {
         this.hostname = hostname;
         this.port = port;
         SignalCallRegistry.registerReferenceCaller(signalCaller);
         this.scheduler = new Scheduler(SchedulerConfig.builder().minThreads(minThreads).maxThreads(maxThreads).build());
+        this.scheduleDelay = scheduleDelay;
     }
 
-    public Client(final Socket socket, final Class<? extends SignalCaller> signalCaller, final Scheduler scheduler) {
+    public Client(final Socket socket, final Class<? extends SignalCaller> signalCaller, final Scheduler scheduler, final long scheduleDelay) {
         this.socket = socket;
         SignalCallRegistry.registerReferenceCaller(signalCaller);
         this.scheduler = scheduler;
+        this.scheduleDelay = scheduleDelay;
     }
 
 

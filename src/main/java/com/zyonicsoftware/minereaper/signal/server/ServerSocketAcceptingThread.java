@@ -28,11 +28,13 @@ public class ServerSocketAcceptingThread {
     private final Class<? extends SignalCaller> signalCaller;
     private final Scheduler scheduler;
     private final String jobName = "client_acceptor";
+    private final long scheduleDelay;
 
-    public ServerSocketAcceptingThread(final ServerSocket serverSocket, final Scheduler scheduler) {
+    public ServerSocketAcceptingThread(final ServerSocket serverSocket, final Scheduler scheduler, final long scheduleDelay) {
         this.serverSocket = serverSocket;
         this.signalCaller = SignalCallRegistry.getReferenceCaller();
         this.scheduler = scheduler;
+        this.scheduleDelay = scheduleDelay;
     }
 
     public void run() {
@@ -44,7 +46,7 @@ public class ServerSocketAcceptingThread {
                 }
                 final Socket socket = this.serverSocket.accept();
                 if (IPV4AddressInspector.getAcceptedIPAddresses().contains(socket.getInetAddress().getHostAddress())) {
-                    final Client client = new Client(socket, this.signalCaller, this.scheduler);
+                    final Client client = new Client(socket, this.signalCaller, this.scheduler, this.scheduleDelay);
                     client.connect();
                     this.clients.add(client);
                     this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).acceptSocketConnectionMessage(SignalProvider.getSignalProvider().getAcceptSocketConnectionMessage());

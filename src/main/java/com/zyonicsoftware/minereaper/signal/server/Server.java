@@ -18,21 +18,24 @@ public class Server extends Connection {
     private ServerSocket serverSocket;
     private ServerSocketAcceptingThread serverSocketAcceptingThread;
     private final Scheduler scheduler;
+    private final long scheduleDelay;
 
     public int getPort() {
         return this.port;
     }
 
-    public Server(final int port, final Class<? extends SignalCaller> signalCaller, final Scheduler scheduler) {
+    public Server(final int port, final Class<? extends SignalCaller> signalCaller, final Scheduler scheduler, final long scheduleDelay) {
         this.port = port;
         SignalCallRegistry.registerReferenceCaller(signalCaller);
         this.scheduler = scheduler;
+        this.scheduleDelay = scheduleDelay;
     }
 
-    public Server(final int port, final Class<? extends SignalCaller> signalCaller, final int minThreads, final int maxThreads) {
+    public Server(final int port, final Class<? extends SignalCaller> signalCaller, final int minThreads, final int maxThreads, final long scheduleDelay) {
         this.port = port;
         SignalCallRegistry.registerReferenceCaller(signalCaller);
         this.scheduler = new Scheduler(SchedulerConfig.builder().minThreads(minThreads).maxThreads(maxThreads).build());
+        this.scheduleDelay = scheduleDelay;
     }
 
     @Override
@@ -43,7 +46,7 @@ public class Server extends Connection {
             this.serverSocket = new ServerSocket(this.port);
         }
         //start accepting clients
-        this.serverSocketAcceptingThread = new ServerSocketAcceptingThread(this.serverSocket, this.scheduler);
+        this.serverSocketAcceptingThread = new ServerSocketAcceptingThread(this.serverSocket, this.scheduler, this.scheduleDelay);
         this.serverSocketAcceptingThread.run();
     }
 
