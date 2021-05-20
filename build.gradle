@@ -7,7 +7,7 @@ plugins {
 apply plugin: 'maven'
 
 group 'com.zyonicsoftware.minereaper.signal'
-version 'v0.6.1'
+version 'v0.7.0'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -18,6 +18,7 @@ repositories {
 }
 
 dependencies {
+    compile group: 'org.jetbrains', name: 'annotations', version: '20.1.0'
     compile group: 'io.fastjson', name: 'boon', version: '0.34'
     compile group: 'com.coreoz', name: 'wisp', version: '2.2.0'
 }

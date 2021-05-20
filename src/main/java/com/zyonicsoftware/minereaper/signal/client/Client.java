@@ -8,6 +8,7 @@ import com.zyonicsoftware.minereaper.signal.connection.Connection;
 import com.zyonicsoftware.minereaper.signal.incoming.InputStreamThread;
 import com.zyonicsoftware.minereaper.signal.outgoing.OutputStreamThread;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -38,7 +39,16 @@ public class Client extends Connection {
         return this.scheduleDelay;
     }
 
-    public Client(final String hostname, final int port, final Class<? extends SignalCaller> signalCaller, final Scheduler scheduler, final long scheduleDelay) {
+    /**
+     * @param hostname      to bound on right hostname.
+     * @param port          to bound the Socket on the right server port.
+     * @param signalCaller  create your own event caller to receive message from Signal ( e.g signal has detect the package is to large or an client has been disconnected or else)
+     * @param scheduler     you can create your own scheduler with Wisp technology / check out https://github.com/Coreoz/Wisp
+     * @param scheduleDelay this is the delay how long the input and output stream wait before receive or send packets ( The lower the delay is the more cpu power the api will consume)
+     *                      The best delay I have tried is 60ms.
+     */
+
+    public Client(@NotNull final String hostname, final int port, @NotNull final Class<? extends SignalCaller> signalCaller, @NotNull final Scheduler scheduler, final long scheduleDelay) {
         this.hostname = hostname;
         this.port = port;
         SignalCallRegistry.registerReferenceCaller(signalCaller);
@@ -46,7 +56,17 @@ public class Client extends Connection {
         this.scheduleDelay = scheduleDelay;
     }
 
-    public Client(final String hostname, final int port, final Class<? extends SignalCaller> signalCaller, final int minThreads, final int maxThreads, final long scheduleDelay) {
+    /**
+     * @param hostname      to bound on right hostname.
+     * @param port          to bound the ServerSocket on your own port.
+     * @param signalCaller  create your own event caller to receive message from Signal ( e.g signal has detect the package is to large or an client has been disconnected or else)
+     * @param minThreads    this set the minimal usable threads for Wisp scheduler /  check out https://github.com/Coreoz/Wisp
+     * @param maxThreads    this set the maximal usable threads for Wisp scheduler  / check out https://github.com/Coreoz/Wisp
+     * @param scheduleDelay this is the delay how long the input and output stream wait before receive or send packets ( The lower the delay is the more cpu power the api will consume)
+     *                      The best delay I have tried is 60ms.
+     */
+
+    public Client(@NotNull final String hostname, final int port, @NotNull final Class<? extends SignalCaller> signalCaller, final int minThreads, final int maxThreads, final long scheduleDelay) {
         this.hostname = hostname;
         this.port = port;
         SignalCallRegistry.registerReferenceCaller(signalCaller);
@@ -54,7 +74,7 @@ public class Client extends Connection {
         this.scheduleDelay = scheduleDelay;
     }
 
-    public Client(final Socket socket, final Class<? extends SignalCaller> signalCaller, final Scheduler scheduler, final long scheduleDelay) {
+    public Client(@NotNull final Socket socket, @NotNull final Class<? extends SignalCaller> signalCaller, @NotNull final Scheduler scheduler, final long scheduleDelay) {
         this.socket = socket;
         SignalCallRegistry.registerReferenceCaller(signalCaller);
         this.scheduler = scheduler;
