@@ -65,6 +65,7 @@ public class ServerSocketAcceptingThread {
 
     }
 
+
     public void interrupt() {
         Thread.currentThread().interrupt();
         this.scheduler.cancel(this.jobName).thenAccept(job -> {

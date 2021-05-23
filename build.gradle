@@ -7,7 +7,7 @@ plugins {
 apply plugin: 'maven'
 
 group 'com.zyonicsoftware.minereaper.signal'
-version 'v0.7.0'
+version 'v0.7.1'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -24,10 +24,13 @@ dependencies {
 }
 
 jar {
+    from sourceSets.main.allSource
     from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
-    exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
+    processResources {
+        exclude("*")
+    }
 }
 
 publishing {
