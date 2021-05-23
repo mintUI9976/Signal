@@ -21,16 +21,8 @@ ________________________________________
 
 ```java
 maven{
-        url"https://gitlab.zyonicsoftware.com/api/v4/projects/144/packages/maven"
-        name"GitLab"
-        credentials(HttpHeaderCredentials){
-        name='Private-Token'
-        value=System.getenv("ZYONIC_PERSONAL_GITLAB_TOKEN")
-        }
-        authentication{
-        header(HttpHeaderAuthentication)
-        }
-        }
+   url "https://gitlab.zyonicsoftware.com/api/v4/projects/144/packages/maven"
+}   
 ```
 
 ```java
