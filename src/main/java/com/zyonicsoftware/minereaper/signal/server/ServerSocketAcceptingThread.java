@@ -92,14 +92,16 @@ public class ServerSocketAcceptingThread {
         //disconnect client
         for (final Iterator<Client> clientIterator = ServerSocketAcceptingThread.this.clients.listIterator(); clientIterator.hasNext(); ) {
             final Client client = clientIterator.next();
-            if (client.getConnectionUUID().get().equals(uuid)) {
-                try {
-                    this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).disconnectClientMessage(SignalProvider.getSignalProvider().getDisconnectClient().replace("%client%", client.getConnectionUUID().get().toString()));
-                    client.disconnect();
-                } catch (final IOException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException exception) {
-                    throw new SignalException(exception);
+            if (client != null) {
+                if (client.getConnectionUUID().get().equals(uuid)) {
+                    try {
+                        this.signalCaller.getDeclaredConstructor(String.class).newInstance(this.toString()).disconnectClientMessage(SignalProvider.getSignalProvider().getDisconnectClient().replace("%client%", client.getConnectionUUID().get().toString()));
+                        client.disconnect();
+                    } catch (final IOException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException exception) {
+                        throw new SignalException(exception);
+                    }
+                    clientIterator.remove();
                 }
-                clientIterator.remove();
             }
         }
     }
@@ -111,16 +113,8 @@ public class ServerSocketAcceptingThread {
         } catch (final InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException exception) {
             throw new SignalException(exception);
         }
-        this.clients.forEach(client -> {
-            try {
-                if (client != null) {
-                    client.disconnect();
-                }
-            } catch (final IOException exception) {
-                throw new SignalException(exception);
-            }
-        });
-        this.clients.clear();
+        this.clients.forEach(client -> this.disconnectClient(client.getConnectionUUID().get()));
+        //this.clients.clear();
     }
 
 }

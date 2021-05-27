@@ -75,7 +75,7 @@ public class Server extends Connection {
     @Override
     public void disconnect() throws IOException {
         //disconnect all clients
-        //this.disconnectAllClients();
+        this.disconnectAllClients();
         // destroy server accepting thread
         this.serverSocketAcceptingThread.interrupt();
         //check if serverSocket is closed
