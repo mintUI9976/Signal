@@ -1,6 +1,14 @@
+/*
+ *
+ *  * Copyright (c) 2021. Zyonic Software - Niklas Griese
+ *  * This File, its contents and by extention the corresponding project is property of Zyonic Software and may not be used without explicit permission to do so.
+ *  *
+ *  * contact(at)zyonicsoftware.com
+ *
+ */
+
 package com.zyonicsoftware.minereaper.signal.example;
 
-import com.coreoz.wisp.stats.SchedulerStats;
 import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
 
@@ -24,11 +32,9 @@ public class ExampleClient {
     }
 
     private static void executeClient() throws IOException {
-        ExampleClient.client = new Client("localhost", 9976, ExampleSignalMessageInstance.class, 1, 2, 60);
-        final SchedulerStats schedulerStats = ExampleClient.client.getScheduler().stats();
+        ExampleClient.client = new Client("localhost", 9976, ExampleSignalMessageInstance.class, 60);
         ExampleClient.client.connect();
         System.out.println("Client has been connect on port: " + ExampleClient.client.getPort());
-        System.out.println("Client started with " + schedulerStats.getThreadPoolStats().getMinThreads() + " minimal Threads and " + schedulerStats.getThreadPoolStats().getMaxThreads() + " maximal Threads.");
     }
 
     public static void sendMessage() {

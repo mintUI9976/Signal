@@ -1,6 +1,14 @@
+/*
+ *
+ *  * Copyright (c) 2021. Zyonic Software - Niklas Griese
+ *  * This File, its contents and by extention the corresponding project is property of Zyonic Software and may not be used without explicit permission to do so.
+ *  *
+ *  * contact(at)zyonicsoftware.com
+ *
+ */
+
 package com.zyonicsoftware.minereaper.signal.example;
 
-import com.coreoz.wisp.stats.SchedulerStats;
 import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
 import com.zyonicsoftware.minereaper.signal.server.Server;
 
@@ -26,11 +34,9 @@ public class ExampleServer {
     }
 
     private static void executeServer() throws IOException {
-        ExampleServer.server = new Server(9976, ExampleSignalMessageInstance.class, ExampleServer.registerAllowedIpv4Addresses(), 2, 4, 60);
-        final SchedulerStats schedulerStats = ExampleServer.server.getScheduler().stats();
+        ExampleServer.server = new Server(9976, ExampleSignalMessageInstance.class, ExampleServer.registerAllowedIpv4Addresses(), 60);
         ExampleServer.server.connect();
         System.out.println("Server has been bound on port: " + ExampleServer.server.getPort());
-        System.out.println("Server started with " + schedulerStats.getThreadPoolStats().getMinThreads() + " minimal Threads and " + schedulerStats.getThreadPoolStats().getMaxThreads() + " maximal Threads.");
     }
 
     public static void sendMessage() {
