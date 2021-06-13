@@ -9,6 +9,8 @@
 
 package com.zyonicsoftware.minereaper.signal.client;
 
+import com.zyonicsoftware.minereaper.enums.EugeneFactoryPriority;
+import com.zyonicsoftware.minereaper.redeugene.RedEugene;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCaller;
 import com.zyonicsoftware.minereaper.signal.connection.Connection;
@@ -20,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class Client extends Connection {
@@ -58,6 +61,7 @@ public class Client extends Connection {
     public Client(@NotNull final String hostname, final int port, @NotNull final Class<? extends SignalCaller> signalCaller, final long scheduleDelay) {
         this.hostname = hostname;
         this.port = port;
+        RedEugeneScheduler.setRedEugene(new RedEugene("SignalClientPool", 3, false, EugeneFactoryPriority.NORM));
         SignalCallRegistry.registerReferenceCaller(signalCaller);
         this.scheduleDelay = scheduleDelay;
     }
@@ -76,9 +80,9 @@ public class Client extends Connection {
             this.socket = new Socket(this.hostname, this.port);
         }
         //start reading and writing
-        this.inputStreamThread = new InputStreamThread("InputStreamThread", TimeUnit.MILLISECONDS, this.scheduleDelay, this);
+        this.inputStreamThread = new InputStreamThread("InputStreamThread-" + UUID.randomUUID(), TimeUnit.MILLISECONDS, this.scheduleDelay, this);
         RedEugeneScheduler.getRedEugeneIntroduction().scheduleWithoutDelay(this.inputStreamThread);
-        this.outputStreamThread = new OutputStreamThread("OutputStreamThread", TimeUnit.MILLISECONDS, this.scheduleDelay, this);
+        this.outputStreamThread = new OutputStreamThread("OutputStreamThread-" + UUID.randomUUID(), TimeUnit.MILLISECONDS, this.scheduleDelay, this);
         RedEugeneScheduler.getRedEugeneIntroduction().scheduleWithoutDelay(this.outputStreamThread);
     }
 

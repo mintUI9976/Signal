@@ -9,6 +9,8 @@
 
 package com.zyonicsoftware.minereaper.signal.server;
 
+import com.zyonicsoftware.minereaper.enums.EugeneFactoryPriority;
+import com.zyonicsoftware.minereaper.redeugene.RedEugene;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCaller;
 import com.zyonicsoftware.minereaper.signal.connection.Connection;
@@ -39,12 +41,31 @@ public class Server extends Connection {
      * @param acceptedIpAddresses only allowed ip addresses can connect
      * @param scheduleDelay       this is the delay how long the input and output stream wait before receive or send packets ( The lower the delay is the more cpu power the api will consume)
      *                            The best delay I have tried is 60ms.
+     * @param coreSize            How many threads your using for input and output threads
      */
 
-    public Server(final int port, @NotNull final Class<? extends SignalCaller> signalCaller, @NotNull final String[] acceptedIpAddresses, final long scheduleDelay) {
+    public Server(final int port, @NotNull final Class<? extends SignalCaller> signalCaller, @NotNull final String[] acceptedIpAddresses, final long scheduleDelay, final int coreSize) {
         this.port = port;
         this.scheduleDelay = scheduleDelay;
         SignalCallRegistry.registerReferenceCaller(signalCaller);
+        RedEugeneScheduler.setRedEugene(new RedEugene("SignalServerPool", coreSize, false, EugeneFactoryPriority.NORM));
+        IPV4AddressInspector.addIpv4Addresses(Arrays.asList(acceptedIpAddresses));
+    }
+
+    /**
+     * @param port                to bound the ServerSocket on your own port.
+     * @param signalCaller        create your own event caller to receive message from Signal ( e.g signal has detect the package is to large or an client has been disconnected or else)
+     * @param acceptedIpAddresses only allowed ip addresses can connect
+     * @param scheduleDelay       this is the delay how long the input and output stream wait before receive or send packets ( The lower the delay is the more cpu power the api will consume)
+     *                            The best delay I have tried is 60ms.
+     * @param redEugene           is bind an other thread pool on this reference
+     */
+
+    public Server(final int port, @NotNull final Class<? extends SignalCaller> signalCaller, @NotNull final String[] acceptedIpAddresses, final long scheduleDelay, final RedEugene redEugene) {
+        this.port = port;
+        this.scheduleDelay = scheduleDelay;
+        SignalCallRegistry.registerReferenceCaller(signalCaller);
+        RedEugeneScheduler.setRedEugene(redEugene);
         IPV4AddressInspector.addIpv4Addresses(Arrays.asList(acceptedIpAddresses));
     }
 

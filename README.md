@@ -1,4 +1,4 @@
-# Signal ![Version Status ](https://img.shields.io/badge/JDK-11-red?style=for-the-badge) [![Version Status ](https://img.shields.io/badge/RELEASE-v0.8.0-blue?style=for-the-badge)](https://gitlab.zyonicsoftware.com/mint9976/Signal/-/packages)
+# Signal ![Version Status ](https://img.shields.io/badge/JDK-11-red?style=for-the-badge) [![Version Status ](https://img.shields.io/badge/RELEASE-v0.8.1-blue?style=for-the-badge)](https://gitlab.zyonicsoftware.com/mint9976/Signal/-/packages)
 
 ## An api for java with the native Java socket technology and the [boonproject](https://github.com/boonproject/boon).
 

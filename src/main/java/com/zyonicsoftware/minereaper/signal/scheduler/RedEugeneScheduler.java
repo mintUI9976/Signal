@@ -9,14 +9,18 @@
 
 package com.zyonicsoftware.minereaper.signal.scheduler;
 
-import com.zyonicsoftware.minereaper.enums.EugeneFactoryPriority;
 import com.zyonicsoftware.minereaper.redeugene.RedEugene;
 import com.zyonicsoftware.minereaper.scheduler.RedEugeneIntroduction;
 
 public class RedEugeneScheduler {
 
-    private final static RedEugene redEugene = new RedEugene("SignalPool", 3, false, EugeneFactoryPriority.NORM);
-    private final static RedEugeneIntroduction redEugeneIntroduction = new RedEugeneIntroduction(RedEugeneScheduler.redEugene);
+    private static RedEugene redEugene;
+    private static RedEugeneIntroduction redEugeneIntroduction;
+
+    public static void setRedEugene(final RedEugene redEugene) {
+        RedEugeneScheduler.redEugene = redEugene;
+        RedEugeneScheduler.redEugeneIntroduction = new RedEugeneIntroduction(RedEugeneScheduler.redEugene);
+    }
 
     public static RedEugene getRedEugene() {
         return RedEugeneScheduler.redEugene;

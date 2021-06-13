@@ -34,7 +34,7 @@ public class ExampleServer {
     }
 
     private static void executeServer() throws IOException {
-        ExampleServer.server = new Server(9976, ExampleSignalMessageInstance.class, ExampleServer.registerAllowedIpv4Addresses(), 60);
+        ExampleServer.server = new Server(9976, ExampleSignalMessageInstance.class, ExampleServer.registerAllowedIpv4Addresses(), 60, 10);
         ExampleServer.server.connect();
         System.out.println("Server has been bound on port: " + ExampleServer.server.getPort());
     }
