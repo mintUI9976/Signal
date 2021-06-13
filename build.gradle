@@ -7,7 +7,7 @@ plugins {
 apply plugin: 'maven'
 
 group 'com.zyonicsoftware.minereaper.signal'
-version 'v0.8.1'
+version 'v0.8.2'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -21,7 +21,6 @@ repositories {
 dependencies {
     compile group: 'org.jetbrains', name: 'annotations', version: '20.1.0'
     compile group: 'io.fastjson', name: 'boon', version: '0.34'
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
     compile group: 'com.zyonicsoftware.minereaper.redeugene', name: 'redeugene', version: 'v0.2.4'
 }
 
