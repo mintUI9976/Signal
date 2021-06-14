@@ -14,19 +14,20 @@ import com.zyonicsoftware.minereaper.scheduler.RedEugeneIntroduction;
 
 public class RedEugeneScheduler {
 
-    private static RedEugene redEugene;
-    private static RedEugeneIntroduction redEugeneIntroduction;
+  private static RedEugene redEugene;
+  private static RedEugeneIntroduction redEugeneIntroduction;
 
-    public static void setRedEugene(final RedEugene redEugene) {
-        RedEugeneScheduler.redEugene = redEugene;
-        RedEugeneScheduler.redEugeneIntroduction = new RedEugeneIntroduction(RedEugeneScheduler.redEugene);
-    }
+  public static void setRedEugene(final RedEugene redEugene) {
+    RedEugeneScheduler.redEugene = redEugene;
+    RedEugeneScheduler.redEugeneIntroduction =
+        new RedEugeneIntroduction(RedEugeneScheduler.redEugene);
+  }
 
-    public static RedEugene getRedEugene() {
-        return RedEugeneScheduler.redEugene;
-    }
+  public static RedEugene getRedEugene() {
+    return RedEugeneScheduler.redEugene;
+  }
 
-    public static RedEugeneIntroduction getRedEugeneIntroduction() {
-        return RedEugeneScheduler.redEugeneIntroduction;
-    }
+  public static RedEugeneIntroduction getRedEugeneIntroduction() {
+    return RedEugeneScheduler.redEugeneIntroduction;
+  }
 }

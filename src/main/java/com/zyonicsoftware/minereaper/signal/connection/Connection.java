@@ -15,14 +15,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class Connection {
 
-    private final AtomicReference<UUID> connectionUUID = new AtomicReference<>(UUID.randomUUID());
+  private final AtomicReference<UUID> connectionUUID = new AtomicReference<>(UUID.randomUUID());
 
-    public AtomicReference<UUID> getConnectionUUID() {
-        return this.connectionUUID;
-    }
+  public AtomicReference<UUID> getConnectionUUID() {
+    return this.connectionUUID;
+  }
 
-    public abstract void connect() throws IOException;
+  public abstract void connect() throws IOException;
 
-    public abstract void disconnect() throws IOException;
-
+  public abstract void disconnect() throws IOException;
 }
