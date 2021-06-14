@@ -80,9 +80,10 @@ public class Client extends Connection {
             this.socket = new Socket(this.hostname, this.port);
         }
         //start reading and writing
-        this.inputStreamThread = new InputStreamThread("InputStreamThread-" + UUID.randomUUID(), TimeUnit.MILLISECONDS, this.scheduleDelay, this);
+        final UUID random = UUID.randomUUID();
+        this.inputStreamThread = new InputStreamThread("InputStreamThread-" + random, TimeUnit.MILLISECONDS, this.scheduleDelay, this);
         RedEugeneScheduler.getRedEugeneIntroduction().scheduleWithoutDelay(this.inputStreamThread);
-        this.outputStreamThread = new OutputStreamThread("OutputStreamThread-" + UUID.randomUUID(), TimeUnit.MILLISECONDS, this.scheduleDelay, this);
+        this.outputStreamThread = new OutputStreamThread("OutputStreamThread-" + random, TimeUnit.MILLISECONDS, this.scheduleDelay, this);
         RedEugeneScheduler.getRedEugeneIntroduction().scheduleWithoutDelay(this.outputStreamThread);
     }
 
