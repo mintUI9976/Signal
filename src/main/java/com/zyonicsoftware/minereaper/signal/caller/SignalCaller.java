@@ -9,6 +9,8 @@
 
 package com.zyonicsoftware.minereaper.signal.caller;
 
+import com.zyonicsoftware.minereaper.signal.client.Client;
+
 public abstract class SignalCaller {
 
   private final String calledClass;
@@ -41,5 +43,9 @@ public abstract class SignalCaller {
 
   public abstract void disconnectClientMessage(final String message);
 
-  public abstract void canceledJob(final String message);
+  public abstract void canceledJobMessage(final String message);
+
+  public abstract void clientTimeoutMessage(final String message);
+
+  public abstract void clientTimeout(final Client client);
 }

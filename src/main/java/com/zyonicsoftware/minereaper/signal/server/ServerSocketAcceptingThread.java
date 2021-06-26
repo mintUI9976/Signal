@@ -35,16 +35,19 @@ public class ServerSocketAcceptingThread extends RedEugeneSchedulerRunnable {
   private final ServerSocket serverSocket;
   private final List<Client> clients = new ArrayList<>();
   private final long scheduleDelay;
+  private final int timeout;
 
   public ServerSocketAcceptingThread(
       @NotNull final String eugeneJobName,
       @NotNull final TimeUnit timeUnit,
       final long period,
       final ServerSocket serverSocket,
-      final long scheduleDelay) {
+      final long scheduleDelay,
+      final int timeout) {
     super(eugeneJobName, timeUnit, period);
     this.serverSocket = serverSocket;
     this.scheduleDelay = scheduleDelay;
+    this.timeout = timeout;
   }
 
   @Override
@@ -58,7 +61,7 @@ public class ServerSocketAcceptingThread extends RedEugeneSchedulerRunnable {
       final Socket socket = this.serverSocket.accept();
       if (IPV4AddressInspector.getAcceptedIPAddresses()
           .contains(socket.getInetAddress().getHostAddress())) {
-        final Client client = new Client(socket, this.scheduleDelay);
+        final Client client = new Client(socket, this.scheduleDelay, this.timeout);
         client.connect();
         this.clients.add(client);
         SignalCallRegistry.getReferenceCaller()
@@ -78,7 +81,6 @@ public class ServerSocketAcceptingThread extends RedEugeneSchedulerRunnable {
                 SignalProvider.getSignalProvider().getUnAcceptSocketConnectionMessage());
         socket.close();
       }
-
     } catch (final IOException
         | InstantiationException
         | InvocationTargetException
@@ -95,7 +97,7 @@ public class ServerSocketAcceptingThread extends RedEugeneSchedulerRunnable {
         SignalCallRegistry.getReferenceCaller()
             .getDeclaredConstructor(String.class)
             .newInstance(this.toString())
-            .canceledJob(
+            .canceledJobMessage(
                 SignalProvider.getSignalProvider()
                     .getCanceledJobMessage()
                     .replaceAll("%job%", jobName));

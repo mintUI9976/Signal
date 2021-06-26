@@ -20,7 +20,7 @@ public class ExampleServer {
   private static Server server;
 
   public static void main(final String[] args) throws IOException {
-    ExampleServer.addShutdownHook();
+    // ExampleServer.addShutdownHook();
     ExampleServer.registerPackets();
     ExampleServer.executeServer();
   }
@@ -39,8 +39,9 @@ public class ExampleServer {
             9976,
             ExampleSignalMessageInstance.class,
             ExampleServer.registerAllowedIpv4Addresses(),
-            60,
-            10);
+            1,
+            10,
+            20 * 1000);
     ExampleServer.server.connect();
     System.out.println("Server has been bound on port: " + ExampleServer.server.getPort());
   }
@@ -51,7 +52,6 @@ public class ExampleServer {
   }
 
   public static void disconnectServer() throws IOException {
-    ExampleServer.server.disconnectAllClients();
     ExampleServer.server.disconnect();
     System.out.println("Server has been disconnected.");
   }

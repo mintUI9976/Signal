@@ -10,6 +10,7 @@
 package com.zyonicsoftware.minereaper.signal.example;
 
 import com.zyonicsoftware.minereaper.signal.caller.SignalCaller;
+import com.zyonicsoftware.minereaper.signal.client.Client;
 
 public class ExampleSignalMessageInstance extends SignalCaller {
 
@@ -45,8 +46,20 @@ public class ExampleSignalMessageInstance extends SignalCaller {
   public void disconnectAllClientMessage(final String message) {}
 
   @Override
-  public void disconnectClientMessage(final String message) {}
+  public void disconnectClientMessage(final String message) {
+    System.out.println(message);
+  }
 
   @Override
-  public void canceledJob(final String message) {}
+  public void canceledJobMessage(final String message) {}
+
+  @Override
+  public void clientTimeoutMessage(final String message) {
+    System.out.println(message);
+  }
+
+  @Override
+  public void clientTimeout(final Client client) {
+    ExampleServer.getServer().disconnectClient(client.getConnectionUUID().get());
+  }
 }

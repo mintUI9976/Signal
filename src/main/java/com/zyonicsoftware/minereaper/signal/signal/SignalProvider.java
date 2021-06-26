@@ -9,8 +9,6 @@
 
 package com.zyonicsoftware.minereaper.signal.signal;
 
-import java.util.concurrent.TimeUnit;
-
 public class SignalProvider {
 
   private static final SignalProvider signalProvider = new SignalProvider();
@@ -30,11 +28,12 @@ public class SignalProvider {
   private final String acceptSocketConnectionMessage;
   private final String unAcceptSocketConnectionMessage;
   private final String disconnectClient;
+  private final String timeoutClient;
   private final String disconnectAllClients;
   private final String canceledJobMessage;
 
   {
-    this.prefix = "Signal > ";
+    this.prefix = "Signal | ";
     this.incomingLengthToLarge = this.prefix + "The received byte array length is larger than 255.";
     this.incomingPacketIsNull =
         this.prefix + "The received packet is null, check your PacketRegistry.";
@@ -52,9 +51,10 @@ public class SignalProvider {
     this.incomingSocketCloseMessage = this.prefix + "The client connection will be closed.";
     this.acceptSocketConnectionMessage = this.prefix + "The client connection has been accepted.";
     this.unAcceptSocketConnectionMessage = this.prefix + "The client connection has been canceled.";
-    this.disconnectClient = this.prefix + "Client: %client% will be disconnected.";
+    this.disconnectClient = this.prefix + "Client: %client% has been disconnected.";
     this.disconnectAllClients = this.prefix + "All Clients will be disconnected.";
     this.canceledJobMessage = this.prefix + "Job: %job% has been canceled.";
+    this.timeoutClient = this.prefix + "Client: %client% has timed out.";
   }
 
   public String getCanceledJobThrowsAnException() {
@@ -125,12 +125,8 @@ public class SignalProvider {
     return this.incomingInputThrowsAnException;
   }
 
-  public void sleepCurrentThread(final long millis) {
-    try {
-      TimeUnit.MILLISECONDS.sleep(millis);
-    } catch (final InterruptedException ignored) {
-
-    }
+  public String getTimeoutClient() {
+    return this.timeoutClient;
   }
 
   public static SignalProvider getSignalProvider() {

@@ -20,7 +20,7 @@ public class ExampleClient {
   private static Client client;
 
   public static void main(final String[] args) throws IOException {
-    ExampleClient.addShutdownHook();
+    // ExampleClient.addShutdownHook();
     ExampleClient.registerPackets();
     ExampleClient.executeClient();
     ExampleClient.sendMessage();
@@ -31,7 +31,8 @@ public class ExampleClient {
   }
 
   private static void executeClient() throws IOException {
-    ExampleClient.client = new Client("localhost", 9976, ExampleSignalMessageInstance.class, 60);
+    ExampleClient.client =
+        new Client("localhost", 9976, ExampleSignalMessageInstance.class, 1, 20 * 1000);
     ExampleClient.client.connect();
     System.out.println("Client has been connect on port: " + ExampleClient.client.getPort());
   }

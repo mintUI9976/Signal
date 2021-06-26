@@ -33,6 +33,7 @@ public class Client extends Connection {
   private InputStreamThread inputStreamThread;
   private OutputStreamThread outputStreamThread;
   private final long scheduleDelay;
+  private final int timeout;
 
   public String getHostname() {
     return this.hostname;
@@ -58,23 +59,27 @@ public class Client extends Connection {
    * @param scheduleDelay this is the delay how long the input and output stream wait before receive
    *     or send packets ( The lower the delay is the more cpu power the api will consume) The best
    *     delay I have tried is 60ms.
+   * @param timeout set the timeout, how long the client have time before timeout
    */
   public Client(
       @NotNull final String hostname,
       final int port,
       @NotNull final Class<? extends SignalCaller> signalCaller,
-      final long scheduleDelay) {
+      final long scheduleDelay,
+      final int timeout) {
     this.hostname = hostname;
     this.port = port;
     RedEugeneScheduler.setRedEugene(
         new RedEugene("SignalClientPool", 3, false, EugeneFactoryPriority.NORM));
     SignalCallRegistry.registerReferenceCaller(signalCaller);
     this.scheduleDelay = scheduleDelay;
+    this.timeout = timeout;
   }
 
-  public Client(@NotNull final Socket socket, final long scheduleDelay) {
+  public Client(@NotNull final Socket socket, final long scheduleDelay, final int timeout) {
     this.socket = socket;
     this.scheduleDelay = scheduleDelay;
+    this.timeout = timeout;
   }
 
   @Override
@@ -83,6 +88,7 @@ public class Client extends Connection {
     if (this.socket == null) {
       // initialise socket
       this.socket = new Socket(this.hostname, this.port);
+      // this.socket.setSoTimeout(this.timeout);
     }
     // start reading and writing
     final UUID random = UUID.randomUUID();
@@ -107,6 +113,10 @@ public class Client extends Connection {
       // closed socket
       this.socket.close();
     }
+  }
+
+  public int getTimeout() {
+    return this.timeout;
   }
 
   public void send(final Packet packet) {

@@ -32,6 +32,7 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
   private final Client client;
   private final Socket socket;
   private final InputStream finalInputStream;
+  private long cachedTime = 0;
 
   public InputStreamThread(
       @NotNull final String eugeneJobName,
@@ -54,85 +55,121 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
     super.run();
     // initialise inputStream
     try {
-      if (InputStreamThread.this.socket.isClosed()) {
+      if (this.socket.isClosed()) {
         // interrupt thread
-        InputStreamThread.this.interrupt();
+        this.interrupt();
         return;
       }
       // check if finalInputStream is null
-      if (InputStreamThread.this.finalInputStream != null
-          && InputStreamThread.this.finalInputStream.available() > 0) {
-        final int b = InputStreamThread.this.finalInputStream.read();
-        if (b != -1) {
-          // check if byte array length smaller then 255 bytes
-          if (b < 255) {
-            // this.bytes.set(new byte[b]);
-            // receive bytes
-            // this.finalInputStream.read(this.bytes.get(), 0, b);
-            final ReadingByteBuffer readingByteBuffer =
-                new ReadingByteBuffer(InputStreamThread.this.finalInputStream.readNBytes(b));
-            // read packetId
-            final int packetId = readingByteBuffer.readInt();
-
-            // check if packet is UpdateUUIDPacket
-            if (packetId == -2) {
-              // read connectionUUID
-              final UUID connectionUUID = readingByteBuffer.readUUID();
-              // set updated connectionUUID
-              InputStreamThread.this.client.getConnectionUUID().set(connectionUUID);
-            } else {
-              // get packet
-              final Class<? extends Packet> packet = PacketRegistry.get(packetId);
-
-              // check if received packet not null
-              if (packet != null) {
+      if (this.finalInputStream != null) {
+        if (this.finalInputStream.available() > 0) {
+          final int b = this.finalInputStream.read();
+          if (b != -1) {
+            // check if byte array length smaller then 255 bytes
+            if (b < 255) {
+              // this.bytes.set(new byte[b]);
+              // receive bytes
+              // this.finalInputStream.read(this.bytes.get(), 0, b);
+              final ReadingByteBuffer readingByteBuffer =
+                  new ReadingByteBuffer(this.finalInputStream.readNBytes(b));
+              // read packetId
+              final int packetId = readingByteBuffer.readInt();
+              // check if packet is UpdateUUIDPacket
+              if (packetId == -2) {
                 // read connectionUUID
                 final UUID connectionUUID = readingByteBuffer.readUUID();
-                // initialise packet
-                packet
-                    .getDeclaredConstructor(UUID.class)
-                    .newInstance(connectionUUID)
-                    .receive(readingByteBuffer);
-                // SignalProvider.getSignalProvider().setIncomingPackets(SignalProvider.getSignalProvider().getIncomingPackets() + 1);
-                SignalCallRegistry.getReferenceCaller()
-                    .getDeclaredConstructor(String.class)
-                    .newInstance(this.toString())
-                    .receivePacketMessage(
-                        SignalProvider.getSignalProvider().getIncomingPacketMessage());
+                // set updated connectionUUID
+                this.client.getConnectionUUID().set(connectionUUID);
               } else {
-                SignalCallRegistry.getReferenceCaller()
-                    .getDeclaredConstructor(String.class)
-                    .newInstance(this.toString())
-                    .receivePacketIsNullMessage(
-                        SignalProvider.getSignalProvider().getIncomingPacketIsNull());
+                // get packet
+                final Class<? extends Packet> packet = PacketRegistry.get(packetId);
+
+                // check if received packet not null
+                if (packet != null) {
+                  // read connectionUUID
+                  final UUID connectionUUID = readingByteBuffer.readUUID();
+                  // initialise packet
+                  packet
+                      .getDeclaredConstructor(UUID.class)
+                      .newInstance(connectionUUID)
+                      .receive(readingByteBuffer);
+                  // set cached time to 0;
+                  if (this.cachedTime != 0) {
+                    this.cachedTime = 0;
+                  }
+                  // SignalProvider.getSignalProvider().setIncomingPackets(SignalProvider.getSignalProvider().getIncomingPackets() + 1);
+                  SignalCallRegistry.getReferenceCaller()
+                      .getDeclaredConstructor(String.class)
+                      .newInstance(this.toString())
+                      .receivePacketMessage(
+                          SignalProvider.getSignalProvider().getIncomingPacketMessage());
+                } else {
+                  SignalCallRegistry.getReferenceCaller()
+                      .getDeclaredConstructor(String.class)
+                      .newInstance(this.toString())
+                      .receivePacketIsNullMessage(
+                          SignalProvider.getSignalProvider().getIncomingPacketIsNull());
+                }
               }
+            } else {
+              SignalCallRegistry.getReferenceCaller()
+                  .getDeclaredConstructor(String.class)
+                  .newInstance(this.toString())
+                  .receiveLengthToLargeMessage(
+                      SignalProvider.getSignalProvider().getIncomingLengthToLarge());
             }
           } else {
+            // close socket
             SignalCallRegistry.getReferenceCaller()
                 .getDeclaredConstructor(String.class)
                 .newInstance(this.toString())
-                .receiveLengthToLargeMessage(
-                    SignalProvider.getSignalProvider().getIncomingLengthToLarge());
+                .receiveSocketCloseMessage(
+                    SignalProvider.getSignalProvider().getIncomingSocketCloseMessage());
+            this.socket.close();
           }
         } else {
-          // close socket
-          SignalCallRegistry.getReferenceCaller()
-              .getDeclaredConstructor(String.class)
-              .newInstance(this.toString())
-              .receiveSocketCloseMessage(
-                  SignalProvider.getSignalProvider().getIncomingSocketCloseMessage());
-          InputStreamThread.this.socket.close();
+          if (this.cachedTime == 0) {
+            this.cachedTime = System.currentTimeMillis();
+          }
+          this.calculateClientTimeoutTime();
         }
       }
+
     } catch (final InstantiationException
+        | IOException
         | IllegalAccessException
         | NoSuchMethodException
-        | InvocationTargetException
-        | IOException exception) {
+        | InvocationTargetException exception) {
       throw new SignalException(
           SignalProvider.getSignalProvider().getIncomingInputThrowsAnException(), exception);
     }
-    // start reading byte arrays
+  }
+
+  private void calculateClientTimeoutTime() {
+    if (this.cachedTime != 0) {
+      final long estimatedTime = System.currentTimeMillis() - this.cachedTime;
+      if (estimatedTime >= this.client.getTimeout()) {
+        try {
+          SignalCallRegistry.getReferenceCaller()
+              .getDeclaredConstructor(String.class)
+              .newInstance(this.toString())
+              .clientTimeoutMessage(
+                  SignalProvider.getSignalProvider()
+                      .getTimeoutClient()
+                      .replace("%client%", this.client.getConnectionUUID().get().toString()));
+          SignalCallRegistry.getReferenceCaller()
+              .getDeclaredConstructor(String.class)
+              .newInstance(this.toString())
+              .clientTimeout(this.client);
+        } catch (final InstantiationException
+            | NoSuchMethodException
+            | InvocationTargetException
+            | IllegalAccessException exception) {
+          throw new SignalException(
+              SignalProvider.getSignalProvider().getIncomingInputThrowsAnException(), exception);
+        }
+      }
+    }
   }
 
   public void interrupt() {
@@ -144,7 +181,7 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
           SignalCallRegistry.getReferenceCaller()
               .getDeclaredConstructor(String.class)
               .newInstance(this.toString())
-              .canceledJob(
+              .canceledJobMessage(
                   SignalProvider.getSignalProvider()
                       .getCanceledJobMessage()
                       .replaceAll("%job%", jobName));

@@ -33,6 +33,7 @@ public class Server extends Connection {
   private ServerSocket serverSocket;
   private ServerSocketAcceptingThread serverSocketAcceptingThread;
   private final long scheduleDelay;
+  private final int timeout;
 
   /**
    * @param port to bound the ServerSocket on your own port.
@@ -43,15 +44,18 @@ public class Server extends Connection {
    *     or send packets ( The lower the delay is the more cpu power the api will consume) The best
    *     delay I have tried is 60ms.
    * @param coreSize How many threads your using for input and output threads
+   * @param timeout set the timeout, how long the server wait before her timeout a client
    */
   public Server(
       final int port,
       @NotNull final Class<? extends SignalCaller> signalCaller,
       @NotNull final String[] acceptedIpAddresses,
       final long scheduleDelay,
-      final int coreSize) {
+      final int coreSize,
+      final int timeout) {
     this.port = port;
     this.scheduleDelay = scheduleDelay;
+    this.timeout = timeout;
     SignalCallRegistry.registerReferenceCaller(signalCaller);
     RedEugeneScheduler.setRedEugene(
         new RedEugene("SignalServerPool", coreSize, false, EugeneFactoryPriority.NORM));
@@ -67,15 +71,18 @@ public class Server extends Connection {
    *     or send packets ( The lower the delay is the more cpu power the api will consume) The best
    *     delay I have tried is 60ms.
    * @param redEugene is bind an other thread pool on this reference
+   * @param timeout set the timeout, how long the server wait before her timeout a client
    */
   public Server(
       final int port,
       @NotNull final Class<? extends SignalCaller> signalCaller,
       @NotNull final String[] acceptedIpAddresses,
       final long scheduleDelay,
-      final RedEugene redEugene) {
+      final RedEugene redEugene,
+      final int timeout) {
     this.port = port;
     this.scheduleDelay = scheduleDelay;
+    this.timeout = timeout;
     SignalCallRegistry.registerReferenceCaller(signalCaller);
     RedEugeneScheduler.setRedEugene(redEugene);
     IPV4AddressInspector.addIpv4Addresses(Arrays.asList(acceptedIpAddresses));
@@ -87,6 +94,7 @@ public class Server extends Connection {
     if (this.serverSocket == null) {
       // initialise serverSocket
       this.serverSocket = new ServerSocket(this.port);
+      // this.serverSocket.setSoTimeout(this.timeout);
     }
     // start accepting clients
     this.serverSocketAcceptingThread =
@@ -95,7 +103,8 @@ public class Server extends Connection {
             TimeUnit.MILLISECONDS,
             1,
             this.serverSocket,
-            this.scheduleDelay);
+            this.scheduleDelay,
+            this.timeout);
     RedEugeneScheduler.getRedEugeneIntroduction()
         .scheduleWithoutDelay(this.serverSocketAcceptingThread);
   }
@@ -116,6 +125,10 @@ public class Server extends Connection {
     } catch (final InterruptedException exception) {
       throw new SignalException(exception);
     }
+  }
+
+  public int getTimeout() {
+    return this.timeout;
   }
 
   public int getPort() {
