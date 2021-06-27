@@ -39,7 +39,7 @@ public class ExampleServer {
             9976,
             ExampleSignalMessageInstance.class,
             ExampleServer.registerAllowedIpv4Addresses(),
-            1,
+            60,
             10,
             20 * 1000);
     ExampleServer.server.connect();
