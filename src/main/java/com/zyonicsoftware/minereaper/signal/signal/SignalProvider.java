@@ -28,6 +28,7 @@ public class SignalProvider {
   private final String acceptSocketConnectionMessage;
   private final String unAcceptSocketConnectionMessage;
   private final String disconnectClient;
+  private final String connectClient;
   private final String timeoutClient;
   private final String disconnectAllClients;
   private final String canceledJobMessage;
@@ -46,15 +47,22 @@ public class SignalProvider {
     this.outgoingLengthToLarge = this.prefix + "The sending byte array length is larger than 255.";
     this.outgoingSocketException = this.prefix + "The sending bytes can not be written or flushed.";
     this.outputStreamThrowsAnException = this.prefix + "The output stream is closed or is null.";
-    this.outgoingPacketMessage = this.prefix + "The packet was successfully sent.";
-    this.incomingPacketMessage = this.prefix + "The packet was received successfully.";
+    this.outgoingPacketMessage =
+        this.prefix + "The packet was sent successfully to client: %client%.";
+    this.incomingPacketMessage =
+        this.prefix + "The packet was received successfully from client: %client%.";
     this.incomingSocketCloseMessage = this.prefix + "The client connection will be closed.";
     this.acceptSocketConnectionMessage = this.prefix + "The client connection has been accepted.";
     this.unAcceptSocketConnectionMessage = this.prefix + "The client connection has been canceled.";
     this.disconnectClient = this.prefix + "Client: %client% has been disconnected.";
+    this.connectClient = this.prefix + "Client: %client% has been connected.";
     this.disconnectAllClients = this.prefix + "All Clients will be disconnected.";
     this.canceledJobMessage = this.prefix + "Job: %job% has been canceled.";
     this.timeoutClient = this.prefix + "Client: %client% has timed out.";
+  }
+
+  public String getConnectClient() {
+    return this.connectClient;
   }
 
   public String getCanceledJobThrowsAnException() {

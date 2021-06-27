@@ -101,7 +101,10 @@ public class OutputStreamThread extends RedEugeneSchedulerRunnable {
               SignalCallRegistry.getReferenceCaller()
                   .getDeclaredConstructor(String.class)
                   .newInstance(this.toString())
-                  .sendPacketMessage(SignalProvider.getSignalProvider().getOutgoingPacketMessage());
+                  .sendPacketMessage(
+                      SignalProvider.getSignalProvider()
+                          .getOutgoingPacketMessage()
+                          .replace("%client%", this.client.getConnectionUUID().get().toString()));
             } else {
               SignalCallRegistry.getReferenceCaller()
                   .getDeclaredConstructor(String.class)

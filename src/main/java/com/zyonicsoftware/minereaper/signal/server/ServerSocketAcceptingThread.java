@@ -67,6 +67,10 @@ public class ServerSocketAcceptingThread extends RedEugeneSchedulerRunnable {
         SignalCallRegistry.getReferenceCaller()
             .getDeclaredConstructor(String.class)
             .newInstance(this.toString())
+            .connectedClientMessage(SignalProvider.getSignalProvider().getConnectClient());
+        SignalCallRegistry.getReferenceCaller()
+            .getDeclaredConstructor(String.class)
+            .newInstance(this.toString())
             .acceptSocketConnectionMessage(
                 SignalProvider.getSignalProvider().getAcceptSocketConnectionMessage());
         // update connectionUUID on client side

@@ -51,6 +51,11 @@ public class ExampleSignalMessageInstance extends SignalCaller {
   }
 
   @Override
+  public void connectedClientMessage(final String message) {
+    System.out.println(message);
+  }
+
+  @Override
   public void canceledJobMessage(final String message) {}
 
   @Override

@@ -43,6 +43,8 @@ public abstract class SignalCaller {
 
   public abstract void disconnectClientMessage(final String message);
 
+  public abstract void connectedClientMessage(final String message);
+
   public abstract void canceledJobMessage(final String message);
 
   public abstract void clientTimeoutMessage(final String message);

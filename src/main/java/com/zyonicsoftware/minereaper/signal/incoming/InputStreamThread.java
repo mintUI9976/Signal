@@ -32,7 +32,7 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
   private final Client client;
   private final Socket socket;
   private final InputStream finalInputStream;
-  private final long cachedTime = 0;
+  private long cachedTime = 0;
 
   public InputStreamThread(
       @NotNull final String eugeneJobName,
@@ -94,15 +94,18 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
                       .newInstance(connectionUUID)
                       .receive(readingByteBuffer);
                   // set cached time to 0;
-                  /*if (this.cachedTime != 0) {
+                  if (this.cachedTime != 0) {
                     this.cachedTime = 0;
-                  }*/
+                  }
                   // SignalProvider.getSignalProvider().setIncomingPackets(SignalProvider.getSignalProvider().getIncomingPackets() + 1);
                   SignalCallRegistry.getReferenceCaller()
                       .getDeclaredConstructor(String.class)
                       .newInstance(this.toString())
                       .receivePacketMessage(
-                          SignalProvider.getSignalProvider().getIncomingPacketMessage());
+                          SignalProvider.getSignalProvider()
+                              .getIncomingPacketMessage()
+                              .replace(
+                                  "%client%", this.client.getConnectionUUID().get().toString()));
                 } else {
                   SignalCallRegistry.getReferenceCaller()
                       .getDeclaredConstructor(String.class)
@@ -128,10 +131,10 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
             this.socket.close();
           }
         } else {
-          /*if (this.cachedTime == 0) {
+          if (this.cachedTime == 0) {
             this.cachedTime = System.currentTimeMillis();
           }
-          this.calculateClientTimeoutTime();*/
+          this.calculateClientTimeoutTime();
         }
       }
 
