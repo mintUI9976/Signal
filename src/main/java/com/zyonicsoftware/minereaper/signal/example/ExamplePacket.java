@@ -62,6 +62,6 @@ public class ExamplePacket extends Packet {
         ExampleClient.sendMessage();
         break;
     }
-    System.out.println(byteArrayMessageToString);
+    // System.out.println(byteArrayMessageToString);
   }
 }
