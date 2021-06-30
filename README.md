@@ -1,9 +1,8 @@
-[![Loading-RedEugene](https://i.postimg.cc/HnjVQNdQ/signal.png "https://gitlab.zyonicsoftware.com")](https://gitlab.zyonicsoftware.com)
-
 <div align="center">
-  <h2>An api for java with the native Java socket technology and the boonproject</h2>
+<a href="https://zyonicsoftware.com"> <img src="https://i.postimg.cc/HnjVQNdQ/signal.png" /></a>
+<h2>An api for java with the native Java socket technology and the boonproject</h2>
   <hr />
-  <a href="https://gitlab.zyonicsoftware.com/mint9976/Signal/-/packages"><img src="https://img.shields.io/badge/release-v1.0.0-9cf" /></a>
+  <a href="https://gitlab.zyonicsoftware.com/mint9976/Signal/-/packages"><img src="https://img.shields.io/badge/release-v1.0.1-9cf" /></a>
   <a href="https://github.com/mintUI9976/Signal"><img src="https://img.shields.io/github/languages/code-size/mintUI9976/Signal?color=orange" /></a>
   <a href="https://github.com/mintUI9976/Signal"><img src="https://img.shields.io/tokei/lines/github/mintUI9976/Signal?color=yellow" /></a>
   <a href="https://github.com/mintUI9976/Signal/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mintUI9976/Signal" /></a>
@@ -63,7 +62,7 @@ maven{url"https://gitlab.zyonicsoftware.com/api/v4/projects/144/packages/maven"}
 ````
 
 ````xml
-compile group:'com.zyonicsoftware.minereaper.signal',name:'Signal',version:'v1.0.0'
+compile group:'com.zyonicsoftware.minereaper.signal',name:'Signal',version:'v1.0.1'
 ````
 
 <hr />
@@ -75,12 +74,12 @@ compile group:'com.zyonicsoftware.minereaper.signal',name:'Signal',version:'v1.0
 <dependency>
     <groupId>com.zyonicsoftware.minereaper.signal</groupId>
     <artifactId>Signal</artifactId>
-    <version>v1.0.0</version>
+    <version>v1.0.1</version>
 </dependency>
 ````
 
 ````xml
-mvn dependency:get -Dartifact=com.zyonicsoftware.minereaper.signal:Signal:v1.0.0
+mvn dependency:get -Dartifact=com.zyonicsoftware.minereaper.signal:Signal:v1.0.1
 ````
 
 ````xml
