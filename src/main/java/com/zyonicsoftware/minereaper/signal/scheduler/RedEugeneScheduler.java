@@ -12,6 +12,11 @@ package com.zyonicsoftware.minereaper.signal.scheduler;
 import com.zyonicsoftware.minereaper.redeugene.RedEugene;
 import com.zyonicsoftware.minereaper.scheduler.RedEugeneIntroduction;
 
+/**
+ * @author Niklas Griese
+ * @see RedEugene
+ * @implSpec https://github.com/mintUI9976/RedEugene
+ */
 public class RedEugeneScheduler {
 
   private static RedEugene redEugene;

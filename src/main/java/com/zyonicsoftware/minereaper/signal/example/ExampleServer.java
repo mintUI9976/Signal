@@ -9,30 +9,48 @@
 
 package com.zyonicsoftware.minereaper.signal.example;
 
+import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
 import com.zyonicsoftware.minereaper.signal.server.Server;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * @author Niklas Griese
+ * @see PacketRegistry
+ * @see com.zyonicsoftware.minereaper.signal.packet.Packet
+ * @see Server
+ */
 public class ExampleServer {
 
+  /** init static reference of Client object */
   private static Server server;
 
   public static void main(final String[] args) throws IOException {
-    // ExampleServer.addShutdownHook();
+    // add shutdown hook
+    ExampleServer.addShutdownHook();
+    // register packets
     ExampleServer.registerPackets();
+    // call server
     ExampleServer.executeServer();
   }
 
+  /** @return return your allowed addresses */
   private static String[] registerAllowedIpv4Addresses() {
     return new String[] {"localhost", "127.0.0.1"};
   }
 
+  /** @apiNote register custom packet */
   private static void registerPackets() {
     PacketRegistry.registerPacket(ExamplePacket.class);
   }
 
+  /**
+   * @apiNote create an new server object
+   * @see Client
+   * @throws IOException when server throw an exception
+   */
   private static void executeServer() throws IOException {
     ExampleServer.server =
         new Server(
@@ -46,16 +64,33 @@ public class ExampleServer {
     System.out.println("Server has been bound on port: " + ExampleServer.server.getPort());
   }
 
+  /**
+   * create an String compare the string to an byte array then the byte array will be try to
+   * compress in an tiny byte array to safe a lot of unnecessary tcp traffic
+   *
+   * @see ExamplePacket
+   * @see com.zyonicsoftware.minereaper.signal.compression.Compression
+   */
   public static void sendMessage() {
     ExampleServer.server.sendToAllClients(
         new ExamplePacket("Server -> Hello Client".getBytes(StandardCharsets.UTF_8)));
   }
 
+  /**
+   * @throws IOException when server throw an exception
+   * @see Server
+   */
   public static void disconnectServer() throws IOException {
     ExampleServer.server.disconnect();
     System.out.println("Server has been disconnected.");
   }
 
+  /**
+   * create an hook to call shutdown
+   *
+   * @see Runtime
+   * @see Client
+   */
   public static void addShutdownHook() {
     Runtime.getRuntime()
         .addShutdownHook(

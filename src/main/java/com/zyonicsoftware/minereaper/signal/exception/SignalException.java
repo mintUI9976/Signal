@@ -9,6 +9,13 @@
 
 package com.zyonicsoftware.minereaper.signal.exception;
 
+/**
+ * @author Niklas Griese
+ * @see java.lang.Throwable
+ * @see java.lang.RuntimeException
+ * @see java.lang.Exception
+ * @see java.io.Serializable
+ */
 public class SignalException extends RuntimeException {
 
   private static final long serialVersionUID = -5951107884665155782L;

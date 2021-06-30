@@ -9,9 +9,16 @@
 
 package com.zyonicsoftware.minereaper.signal.example;
 
+import com.zyonicsoftware.minereaper.signal.allocator.Allocator;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCaller;
 import com.zyonicsoftware.minereaper.signal.client.Client;
 
+/**
+ * @author Niklas Griese
+ * @see com.zyonicsoftware.minereaper.signal.caller.SignalCaller
+ * @see Allocator
+ * @see com.zyonicsoftware.minereaper.signal.allocator.Allocation
+ */
 public class ExampleSignalMessageInstance extends SignalCaller {
 
   public ExampleSignalMessageInstance(final String calledClass) {
@@ -28,10 +35,14 @@ public class ExampleSignalMessageInstance extends SignalCaller {
   public void sendLengthToLargeMessage(final String message) {}
 
   @Override
-  public void sendPacketMessage(final String message) {}
+  public void sendPacketMessage(final String message) {
+    System.out.println(message);
+  }
 
   @Override
-  public void receivePacketMessage(final String message) {}
+  public void receivePacketMessage(final String message) {
+    System.out.println(message);
+  }
 
   @Override
   public void receiveSocketCloseMessage(final String message) {}
@@ -63,8 +74,20 @@ public class ExampleSignalMessageInstance extends SignalCaller {
     System.out.println(message);
   }
 
+  /**
+   * @param client set the client which is time outed and receive nothing response
+   * @apiNote at the first case the server has checked the client receive nothing response at the
+   *     second case the client has checked the server send nothing response to receive them
+   */
   @Override
   public void clientTimeout(final Client client) {
-    ExampleServer.getServer().disconnectClient(client.getConnectionUUID().get());
+    switch (Allocator.getAllocation()) {
+      case CLIENT_FROM_SERVER_SIDE:
+        ExampleServer.getServer().disconnectClient(client.getConnectionUUID().get());
+        break;
+      case CLIENT_SIDE:
+        System.out.println("You are timed out.");
+        break;
+    }
   }
 }

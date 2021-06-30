@@ -11,6 +11,8 @@ package com.zyonicsoftware.minereaper.signal.server;
 
 import com.zyonicsoftware.minereaper.enums.EugeneFactoryPriority;
 import com.zyonicsoftware.minereaper.redeugene.RedEugene;
+import com.zyonicsoftware.minereaper.signal.allocator.Allocation;
+import com.zyonicsoftware.minereaper.signal.allocator.Allocator;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCaller;
 import com.zyonicsoftware.minereaper.signal.connection.Connection;
@@ -18,6 +20,7 @@ import com.zyonicsoftware.minereaper.signal.exception.SignalException;
 import com.zyonicsoftware.minereaper.signal.inspector.IPV4AddressInspector;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.scheduler.RedEugeneScheduler;
+import com.zyonicsoftware.minereaper.signal.signal.SignalProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -86,6 +89,9 @@ public class Server extends Connection {
     SignalCallRegistry.registerReferenceCaller(signalCaller);
     RedEugeneScheduler.setRedEugene(redEugene);
     IPV4AddressInspector.addIpv4Addresses(Arrays.asList(acceptedIpAddresses));
+    if (timeout <= 10000) {
+      throw new SignalException(SignalProvider.getSignalProvider().getTimeoutThrowsAnException());
+    }
   }
 
   @Override
@@ -107,6 +113,7 @@ public class Server extends Connection {
             this.timeout);
     RedEugeneScheduler.getRedEugeneIntroduction()
         .scheduleWithoutDelay(this.serverSocketAcceptingThread);
+    Allocator.setAllocation(Allocation.CLIENT_FROM_SERVER_SIDE);
   }
 
   @Override
@@ -127,43 +134,58 @@ public class Server extends Connection {
     }
   }
 
+  /**
+   * @return your custom timeout value
+   * @apiNote your custom value must be above 10000ms
+   */
   public int getTimeout() {
     return this.timeout;
   }
 
+  /** @return your custom port */
   public int getPort() {
     return this.port;
   }
 
+  /**
+   * @param packet find the packet
+   * @param uuid specify the client send to client
+   */
   public void sendToClient(final Packet packet, final UUID uuid) {
-    // send to client
     this.serverSocketAcceptingThread.sendToClient(packet, uuid);
   }
 
+  /** @param packet find the packet send to all clients */
   public void sendToAllClients(final Packet packet) {
-    // send to all clients
     this.serverSocketAcceptingThread.sendToAllClients(packet);
   }
 
+  /**
+   * @param packet find the packet
+   * @param uuid specify the client send to client
+   * @return future
+   */
   public CompletableFuture<Void> sendToClientAsync(final Packet packet, final UUID uuid) {
-    // send to client
     return CompletableFuture.runAsync(
         () -> this.serverSocketAcceptingThread.sendToClient(packet, uuid));
   }
 
+  /**
+   * @param packet find the packet send to all clients
+   * @return future
+   */
   public CompletableFuture<Void> sendToAllClientsAsync(final Packet packet) {
-    // send to all clients
     return CompletableFuture.runAsync(
         () -> this.serverSocketAcceptingThread.sendToAllClients(packet));
   }
 
+  /** @param uuid specify the client */
   public void disconnectClient(final UUID uuid) {
-    // disconnect client
     this.serverSocketAcceptingThread.disconnectClient(uuid);
   }
 
+  /** all clients will be closed */
   public void disconnectAllClients() {
-    // disconnect all clients
     this.serverSocketAcceptingThread.disconnectAllClients();
   }
 }

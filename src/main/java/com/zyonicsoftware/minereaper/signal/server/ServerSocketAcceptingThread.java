@@ -30,6 +30,18 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author Niklas Griese
+ * @see com.zyonicsoftware.minereaper.runnable.RedEugeneSchedulerRunnable
+ * @see java.lang.Runnable
+ * @see Server
+ * @see Client
+ * @see Packet
+ * @see SignalProvider
+ * @see Socket
+ * @see ServerSocket
+ * @see TimeUnit
+ */
 public class ServerSocketAcceptingThread extends RedEugeneSchedulerRunnable {
 
   private final ServerSocket serverSocket;
@@ -67,7 +79,10 @@ public class ServerSocketAcceptingThread extends RedEugeneSchedulerRunnable {
         SignalCallRegistry.getReferenceCaller()
             .getDeclaredConstructor(String.class)
             .newInstance(this.toString())
-            .connectedClientMessage(SignalProvider.getSignalProvider().getConnectClient());
+            .connectedClientMessage(
+                SignalProvider.getSignalProvider()
+                    .getConnectClient()
+                    .replace("%client%", client.getConnectionUUID().get().toString()));
         SignalCallRegistry.getReferenceCaller()
             .getDeclaredConstructor(String.class)
             .newInstance(this.toString())

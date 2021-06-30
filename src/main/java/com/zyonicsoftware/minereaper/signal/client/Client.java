@@ -11,13 +11,18 @@ package com.zyonicsoftware.minereaper.signal.client;
 
 import com.zyonicsoftware.minereaper.enums.EugeneFactoryPriority;
 import com.zyonicsoftware.minereaper.redeugene.RedEugene;
+import com.zyonicsoftware.minereaper.signal.allocator.Allocation;
+import com.zyonicsoftware.minereaper.signal.allocator.Allocator;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCaller;
 import com.zyonicsoftware.minereaper.signal.connection.Connection;
+import com.zyonicsoftware.minereaper.signal.exception.SignalException;
 import com.zyonicsoftware.minereaper.signal.incoming.InputStreamThread;
+import com.zyonicsoftware.minereaper.signal.keepalive.KeepAliveThread;
 import com.zyonicsoftware.minereaper.signal.outgoing.OutputStreamThread;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.scheduler.RedEugeneScheduler;
+import com.zyonicsoftware.minereaper.signal.signal.SignalProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -32,6 +37,7 @@ public class Client extends Connection {
   private Socket socket;
   private InputStreamThread inputStreamThread;
   private OutputStreamThread outputStreamThread;
+  private KeepAliveThread keepAliveThread;
   private final long scheduleDelay;
   private final int timeout;
 
@@ -60,6 +66,7 @@ public class Client extends Connection {
    *     or send packets ( The lower the delay is the more cpu power the api will consume) The best
    *     delay I have tried is 60ms.
    * @param timeout set the timeout, how long the client have time before timeout
+   * @apiNote your custom value must be above 10000ms
    */
   public Client(
       @NotNull final String hostname,
@@ -74,14 +81,41 @@ public class Client extends Connection {
     SignalCallRegistry.registerReferenceCaller(signalCaller);
     this.scheduleDelay = scheduleDelay;
     this.timeout = timeout;
+    Allocator.setAllocation(Allocation.CLIENT_SIDE);
+    if (timeout <= 10000) {
+      throw new SignalException(SignalProvider.getSignalProvider().getTimeoutThrowsAnException());
+    }
   }
 
+  /**
+   * @param socket use to connect server with client
+   * @param scheduleDelay this is the delay how long the input and output stream wait before receive
+   *     * or send packets ( The lower the delay is the more cpu power the api will consume) The
+   *     best * delay I have tried is 60ms.
+   * @param timeout set the timeout, how long the client have time before timeout
+   * @apiNote this object will be only called from Server object
+   * @apiNote your custom value must be above 10000ms
+   * @see com.zyonicsoftware.minereaper.signal.server.ServerSocketAcceptingThread
+   * @see com.zyonicsoftware.minereaper.signal.server.Server
+   */
   public Client(@NotNull final Socket socket, final long scheduleDelay, final int timeout) {
     this.socket = socket;
     this.scheduleDelay = scheduleDelay;
     this.timeout = timeout;
+    if (timeout <= 10000) {
+      throw new SignalException(SignalProvider.getSignalProvider().getTimeoutThrowsAnException());
+    }
   }
 
+  /**
+   * The connect method will be override from original
+   *
+   * @see Connection refernce object
+   * @throws IOException will be called when socket throw an exception
+   * @see KeepAliveThread
+   * @see com.zyonicsoftware.minereaper.signal.packet.ahead.KeepAlivePacket will be only send from
+   *     CLIENT_SIDE and received CLIENT_FROM_SERVER_SIDE
+   */
   @Override
   public void connect() throws IOException {
     // check if socket is initialised
@@ -100,11 +134,27 @@ public class Client extends Connection {
         new OutputStreamThread(
             "OutputStreamThread-" + random, TimeUnit.MILLISECONDS, this.scheduleDelay, this);
     RedEugeneScheduler.getRedEugeneIntroduction().scheduleWithoutDelay(this.outputStreamThread);
+    if (Allocator.getAllocation().equals(Allocation.CLIENT_SIDE)) {
+      this.keepAliveThread =
+          new KeepAliveThread(
+              "KeepAliveThread-" + random, TimeUnit.MILLISECONDS, this.timeout - 1000, this);
+      RedEugeneScheduler.getRedEugeneIntroduction().scheduleWithoutDelay(this.keepAliveThread);
+    }
   }
 
+  /**
+   * The disconnect method will be override from original
+   *
+   * @see Connection refernce object
+   * @throws IOException will be called when socket throw an exception
+   */
   @Override
   public void disconnect() throws IOException {
-    // interrupt reading and writing
+    // interrupt the keep alive thread
+    if (Allocator.getAllocation().equals(Allocation.CLIENT_SIDE)) {
+      this.keepAliveThread.interrupt();
+    }
+    // interrupt reading and writing thread
     this.inputStreamThread.interrupt();
     this.outputStreamThread.interrupt();
 
@@ -115,10 +165,15 @@ public class Client extends Connection {
     }
   }
 
+  /**
+   * @return your custom timeout value
+   * @apiNote your custom value must be above 10000ms
+   */
   public int getTimeout() {
     return this.timeout;
   }
 
+  /** @param packet adds the packet to list */
   public void send(final Packet packet) {
     this.outputStreamThread.send(packet);
   }

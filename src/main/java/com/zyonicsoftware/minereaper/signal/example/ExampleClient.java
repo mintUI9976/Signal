@@ -15,21 +15,39 @@ import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * @author Niklas Griese
+ * @see Client
+ * @see PacketRegistry
+ * @see ExamplePacket
+ * @see ExampleServer
+ */
 public class ExampleClient {
 
+  /** init static reference of Client object */
   private static Client client;
 
   public static void main(final String[] args) throws IOException {
-    // ExampleClient.addShutdownHook();
+    // add shutdown hook
+    ExampleClient.addShutdownHook();
+    // register packets
     ExampleClient.registerPackets();
+    // call client
     ExampleClient.executeClient();
+    // send first message
     ExampleClient.sendMessage();
   }
 
+  /** @apiNote register custom packet */
   private static void registerPackets() {
     PacketRegistry.registerPacket(ExamplePacket.class);
   }
 
+  /**
+   * @apiNote create an new client object
+   * @see Client
+   * @throws IOException when client throw an exception
+   */
   private static void executeClient() throws IOException {
     ExampleClient.client =
         new Client("localhost", 9976, ExampleSignalMessageInstance.class, 60, 20 * 1000);
@@ -37,16 +55,33 @@ public class ExampleClient {
     System.out.println("Client has been connect on port: " + ExampleClient.client.getPort());
   }
 
+  /**
+   * create an String compare the string to an byte array then the byte array will be try to
+   * compress in an tiny byte array to safe a lot of unnecessary tcp traffic
+   *
+   * @see ExamplePacket
+   * @see com.zyonicsoftware.minereaper.signal.compression.Compression
+   */
   public static void sendMessage() {
     ExampleClient.client.send(
         new ExamplePacket("Client -> Hello Server".getBytes(StandardCharsets.UTF_8)));
   }
 
+  /**
+   * @throws IOException when client throw an exception
+   * @see Client
+   */
   public static void disconnectClient() throws IOException {
     ExampleClient.client.disconnect();
     System.out.println("Client has been disconnected.");
   }
 
+  /**
+   * create an hook to call shutdown
+   *
+   * @see Runtime
+   * @see Client
+   */
   public static void addShutdownHook() {
     Runtime.getRuntime()
         .addShutdownHook(
@@ -60,6 +95,7 @@ public class ExampleClient {
                 }));
   }
 
+  /** @return the created reference of Client object */
   public static Client getClient() {
     return ExampleClient.client;
   }

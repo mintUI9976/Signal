@@ -9,6 +9,7 @@
 
 package com.zyonicsoftware.minereaper.signal.signal;
 
+/** @author Niklas Griese */
 public class SignalProvider {
 
   private static final SignalProvider signalProvider = new SignalProvider();
@@ -32,6 +33,7 @@ public class SignalProvider {
   private final String timeoutClient;
   private final String disconnectAllClients;
   private final String canceledJobMessage;
+  private final String timeoutThrowsAnException;
 
   {
     this.prefix = "Signal | ";
@@ -48,9 +50,9 @@ public class SignalProvider {
     this.outgoingSocketException = this.prefix + "The sending bytes can not be written or flushed.";
     this.outputStreamThrowsAnException = this.prefix + "The output stream is closed or is null.";
     this.outgoingPacketMessage =
-        this.prefix + "The packet was sent successfully to client: %client%.";
+        this.prefix + "The packet: %packet% was sent successfully to client: %client%.";
     this.incomingPacketMessage =
-        this.prefix + "The packet was received successfully from client: %client%.";
+        this.prefix + "The packet: %packet% was received successfully from client: %client%.";
     this.incomingSocketCloseMessage = this.prefix + "The client connection will be closed.";
     this.acceptSocketConnectionMessage = this.prefix + "The client connection has been accepted.";
     this.unAcceptSocketConnectionMessage = this.prefix + "The client connection has been canceled.";
@@ -59,6 +61,13 @@ public class SignalProvider {
     this.disconnectAllClients = this.prefix + "All Clients will be disconnected.";
     this.canceledJobMessage = this.prefix + "Job: %job% has been canceled.";
     this.timeoutClient = this.prefix + "Client: %client% has timed out.";
+    this.timeoutThrowsAnException =
+        this.prefix
+            + "The timeout value must be greater than 10000ms to use the technology in combination with the KeepAlive scheduler.";
+  }
+
+  public String getTimeoutThrowsAnException() {
+    return this.timeoutThrowsAnException;
   }
 
   public String getConnectClient() {

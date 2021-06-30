@@ -16,6 +16,7 @@ import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.exception.SignalException;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
+import com.zyonicsoftware.minereaper.signal.packet.ahead.KeepAlivePacket;
 import com.zyonicsoftware.minereaper.signal.packet.ahead.UpdateUUIDPacket;
 import com.zyonicsoftware.minereaper.signal.scheduler.RedEugeneScheduler;
 import com.zyonicsoftware.minereaper.signal.signal.SignalProvider;
@@ -29,6 +30,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author Niklas Griese
+ * @see java.lang.Runnable
+ * @see com.zyonicsoftware.minereaper.runnable.RedEugeneSchedulerRunnable
+ * @see WritingByteBuffer
+ * @see Client
+ * @see Packet
+ * @see SignalProvider
+ */
 public class OutputStreamThread extends RedEugeneSchedulerRunnable {
 
   private final Client client;
@@ -77,6 +87,9 @@ public class OutputStreamThread extends RedEugeneSchedulerRunnable {
             if (packet.getClass().equals(UpdateUUIDPacket.class)) {
               writingByteBuffer.writeInt(-2);
               writingByteBuffer.writeUUID(packet.getConnectionUUID());
+            } else if (packet.getClass().equals(KeepAlivePacket.class)) {
+              writingByteBuffer.writeInt(-3);
+              writingByteBuffer.writeUUID(this.client.getConnectionUUID().get());
             } else {
               // get packetId
               final int packetId = PacketRegistry.indexOf(packet.getClass());
@@ -98,13 +111,8 @@ public class OutputStreamThread extends RedEugeneSchedulerRunnable {
               // flush outputStream
               this.finalOutputStream.flush();
               // SignalProvider.getSignalProvider().setOutgoingPackets(SignalProvider.getSignalProvider().getOutgoingPackets() + 1);
-              SignalCallRegistry.getReferenceCaller()
-                  .getDeclaredConstructor(String.class)
-                  .newInstance(this.toString())
-                  .sendPacketMessage(
-                      SignalProvider.getSignalProvider()
-                          .getOutgoingPacketMessage()
-                          .replace("%client%", this.client.getConnectionUUID().get().toString()));
+              this.receiveOutgoingPacketMessage(
+                  packet.getClass().getName(), this.client.getConnectionUUID().get().toString());
             } else {
               SignalCallRegistry.getReferenceCaller()
                   .getDeclaredConstructor(String.class)
@@ -126,6 +134,28 @@ public class OutputStreamThread extends RedEugeneSchedulerRunnable {
     }
   }
 
+  /**
+   * @param packetName intern call
+   * @param connectionUUID intern call
+   * @throws NoSuchMethodException when instance can not be called
+   * @throws InvocationTargetException when instance can not be called
+   * @throws InstantiationException when instance can not be called
+   * @throws IllegalAccessException when instance can not be called
+   */
+  private void receiveOutgoingPacketMessage(final String packetName, final String connectionUUID)
+      throws NoSuchMethodException, InvocationTargetException, InstantiationException,
+          IllegalAccessException {
+    SignalCallRegistry.getReferenceCaller()
+        .getDeclaredConstructor(String.class)
+        .newInstance(this.toString())
+        .sendPacketMessage(
+            SignalProvider.getSignalProvider()
+                .getOutgoingPacketMessage()
+                .replace("%packet%", packetName)
+                .replace("%client%", connectionUUID));
+  }
+
+  /** destroy the runner at the client disconnect */
   public void interrupt() {
     try {
       this.finalOutputStream.close();
@@ -156,6 +186,7 @@ public class OutputStreamThread extends RedEugeneSchedulerRunnable {
     }
   }
 
+  /** @param packet adds packets to the processing list */
   public void send(final Packet packet) {
     this.packets.add(packet);
   }

@@ -18,12 +18,19 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+/**
+ * @author Niklas Griese
+ * @see Deflater
+ * @see Inflater
+ * @see ByteArrayOutputStream
+ */
 public class Compression {
 
+  /** @apiNote init the static compression reference */
   private static final Compression compression = new Compression();
 
   /**
-   * @param data byte[] will be used to compress the information at the defalter algorithm.
+   * @param data byte[] will be used to compress the information at the deflated algorithm.
    * @return an compressed information byte[].
    */
   public byte[] compress(final byte... data) {
@@ -87,6 +94,7 @@ public class Compression {
     }
   }
 
+  /** @return the static compression reference */
   public static Compression getCompression() {
     return Compression.compression;
   }

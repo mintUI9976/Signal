@@ -21,9 +21,14 @@ import java.util.UUID;
  * @see ReadingByteBuffer
  * @see WritingByteBuffer
  */
-public class UpdateUUIDPacket extends Packet {
-  public UpdateUUIDPacket(final UUID connectionUUID) {
+public class KeepAlivePacket extends Packet {
+
+  public KeepAlivePacket(final UUID connectionUUID) {
     super(connectionUUID);
+  }
+
+  public KeepAlivePacket() {
+    super(null);
   }
 
   @Override
