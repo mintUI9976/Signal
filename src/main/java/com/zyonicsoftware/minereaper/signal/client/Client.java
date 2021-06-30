@@ -134,10 +134,12 @@ public class Client extends Connection {
         new OutputStreamThread(
             "OutputStreamThread-" + random, TimeUnit.MILLISECONDS, this.scheduleDelay, this);
     RedEugeneScheduler.getRedEugeneIntroduction().scheduleWithoutDelay(this.outputStreamThread);
-    this.keepAliveThread =
-        new KeepAliveThread(
-            "KeepAliveThread-" + random, TimeUnit.MILLISECONDS, this.timeout - 1000, this);
-    RedEugeneScheduler.getRedEugeneIntroduction().scheduleWithoutDelay(this.keepAliveThread);
+    if (Allocator.getAllocation().equals(Allocation.CLIENT_SIDE)) {
+      this.keepAliveThread =
+          new KeepAliveThread(
+              "KeepAliveThread-" + random, TimeUnit.MILLISECONDS, this.timeout - 1000, this);
+      RedEugeneScheduler.getRedEugeneIntroduction().scheduleWithoutDelay(this.keepAliveThread);
+    }
   }
 
   /**
@@ -149,7 +151,10 @@ public class Client extends Connection {
   @Override
   public void disconnect() throws IOException {
     // interrupt the keep alive thread
-    this.keepAliveThread.interrupt();
+    if (Allocator.getAllocation().equals(Allocation.CLIENT_SIDE)) {
+      this.keepAliveThread.interrupt();
+    }
+
     // interrupt reading and writing thread
     this.inputStreamThread.interrupt();
     this.outputStreamThread.interrupt();

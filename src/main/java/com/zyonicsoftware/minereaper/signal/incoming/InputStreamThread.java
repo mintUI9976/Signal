@@ -93,12 +93,14 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
                 final UUID connectionUUID = readingByteBuffer.readUUID();
                 // set updated connectionUUID
                 this.client.getConnectionUUID().set(connectionUUID);
+                this.resetCalculation();
                 this.receiveIncomingPacketMessage(
                     UpdateUUIDPacket.class.getName(), connectionUUID.toString());
               } else if (packetId == -3) {
                 // read connectionUUID
                 final UUID connectionUUID = readingByteBuffer.readUUID();
                 // set updated connectionUUID
+                this.resetCalculation();
                 this.receiveIncomingPacketMessage(
                     KeepAlivePacket.class.getName(), connectionUUID.toString());
               } else {
@@ -180,7 +182,7 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
 
   /** rested the calculation at the client time outed */
   private void resetCalculation() {
-    if (this.cachedTime != 0) {
+    if (this.cachedTime > 0) {
       this.cachedTime = 0;
     }
   }
@@ -191,7 +193,7 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
       this.cachedTime = System.currentTimeMillis();
     } else {
       final long estimatedTime = System.currentTimeMillis() - this.cachedTime;
-      if (estimatedTime >= this.client.getTimeout()) {
+      if (estimatedTime == this.client.getTimeout()) {
         try {
           SignalCallRegistry.getReferenceCaller()
               .getDeclaredConstructor(String.class)
