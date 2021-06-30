@@ -11,6 +11,7 @@ package com.zyonicsoftware.minereaper.signal.outgoing;
 
 import com.zyonicsoftware.minereaper.runnable.RedEugeneSchedulerRunnable;
 import com.zyonicsoftware.minereaper.signal.buffer.WritingByteBuffer;
+import com.zyonicsoftware.minereaper.signal.cache.Cache;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
 import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.exception.SignalException;
@@ -113,6 +114,8 @@ public class OutputStreamThread extends RedEugeneSchedulerRunnable {
               // SignalProvider.getSignalProvider().setOutgoingPackets(SignalProvider.getSignalProvider().getOutgoingPackets() + 1);
               this.receiveOutgoingPacketMessage(
                   packet.getClass().getName(), this.client.getConnectionUUID().get().toString());
+              this.client.setOutgoingPackets(this.client.getOutgoingPackets() + 1);
+              Cache.setOutgoingPackets(Cache.getOutgoingPackets() + 1);
             } else {
               SignalCallRegistry.getReferenceCaller()
                   .getDeclaredConstructor(String.class)

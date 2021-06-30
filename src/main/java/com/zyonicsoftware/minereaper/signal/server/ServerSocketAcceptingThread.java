@@ -10,6 +10,7 @@
 package com.zyonicsoftware.minereaper.signal.server;
 
 import com.zyonicsoftware.minereaper.runnable.RedEugeneSchedulerRunnable;
+import com.zyonicsoftware.minereaper.signal.cache.Cache;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
 import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.exception.SignalException;
@@ -24,9 +25,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -45,7 +44,6 @@ import java.util.concurrent.TimeUnit;
 public class ServerSocketAcceptingThread extends RedEugeneSchedulerRunnable {
 
   private final ServerSocket serverSocket;
-  private final List<Client> clients = new ArrayList<>();
   private final long scheduleDelay;
   private final int timeout;
 
@@ -75,7 +73,12 @@ public class ServerSocketAcceptingThread extends RedEugeneSchedulerRunnable {
           .contains(socket.getInetAddress().getHostAddress())) {
         final Client client = new Client(socket, this.scheduleDelay, this.timeout);
         client.connect();
-        this.clients.add(client);
+        Cache.add(client);
+        SignalCallRegistry.getReferenceCaller()
+            .getDeclaredConstructor(String.class)
+            .newInstance(this.toString())
+            .acceptSocketConnectionMessage(
+                SignalProvider.getSignalProvider().getAcceptSocketConnectionMessage());
         SignalCallRegistry.getReferenceCaller()
             .getDeclaredConstructor(String.class)
             .newInstance(this.toString())
@@ -83,11 +86,6 @@ public class ServerSocketAcceptingThread extends RedEugeneSchedulerRunnable {
                 SignalProvider.getSignalProvider()
                     .getConnectClient()
                     .replace("%client%", client.getConnectionUUID().get().toString()));
-        SignalCallRegistry.getReferenceCaller()
-            .getDeclaredConstructor(String.class)
-            .newInstance(this.toString())
-            .acceptSocketConnectionMessage(
-                SignalProvider.getSignalProvider().getAcceptSocketConnectionMessage());
         // update connectionUUID on client side
         final UpdateUUIDPacket updateUUIDPacket =
             new UpdateUUIDPacket(client.getConnectionUUID().get());
@@ -131,20 +129,19 @@ public class ServerSocketAcceptingThread extends RedEugeneSchedulerRunnable {
 
   public void sendToClient(final Packet packet, final UUID uuid) {
     // send to client
-    this.clients.stream()
+    Cache.getClientList().stream()
         .filter(client -> client.getConnectionUUID().get().equals(uuid))
         .forEach(client -> client.send(packet));
   }
 
   public void sendToAllClients(final Packet packet) {
     // send to all clients
-    this.clients.forEach(client -> client.send(packet));
+    Cache.getClientList().forEach(client -> client.send(packet));
   }
 
+  /** @param uuid disconnect client and removed him */
   public void disconnectClient(final UUID uuid) {
-    // disconnect client
-    for (final Iterator<Client> clientIterator =
-            ServerSocketAcceptingThread.this.clients.listIterator();
+    for (final Iterator<Client> clientIterator = Cache.getClientList().listIterator();
         clientIterator.hasNext(); ) {
       final Client client = clientIterator.next();
       if (client != null) {
@@ -171,6 +168,7 @@ public class ServerSocketAcceptingThread extends RedEugeneSchedulerRunnable {
     }
   }
 
+  /** @apiNote disconnect all clients clear all clients */
   public void disconnectAllClients() {
     // disconnect all clients
     try {
@@ -184,7 +182,7 @@ public class ServerSocketAcceptingThread extends RedEugeneSchedulerRunnable {
         | NoSuchMethodException exception) {
       throw new SignalException(exception);
     }
-    this.clients.forEach(client -> this.disconnectClient(client.getConnectionUUID().get()));
-    // this.clients.clear();
+    Cache.getClientList()
+        .forEach(client -> this.disconnectClient(client.getConnectionUUID().get()));
   }
 }

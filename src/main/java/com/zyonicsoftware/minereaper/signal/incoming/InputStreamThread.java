@@ -11,6 +11,7 @@ package com.zyonicsoftware.minereaper.signal.incoming;
 
 import com.zyonicsoftware.minereaper.runnable.RedEugeneSchedulerRunnable;
 import com.zyonicsoftware.minereaper.signal.buffer.ReadingByteBuffer;
+import com.zyonicsoftware.minereaper.signal.cache.Cache;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
 import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.exception.SignalException;
@@ -116,6 +117,8 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
                       .getDeclaredConstructor(UUID.class)
                       .newInstance(connectionUUID)
                       .receive(readingByteBuffer);
+                  Cache.setIncomingPackets(Cache.getIncomingPackets() + 1);
+                  this.client.setIncomingPackets(this.client.getIncomingPackets() + 1);
                   // set cached time to 0;
                   this.resetCalculation();
                   // SignalProvider.getSignalProvider().setIncomingPackets(SignalProvider.getSignalProvider().getIncomingPackets() + 1);

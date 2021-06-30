@@ -40,6 +40,24 @@ public class Client extends Connection {
   private KeepAliveThread keepAliveThread;
   private final long scheduleDelay;
   private final int timeout;
+  private long incomingPackets;
+  private long outgoingPackets;
+
+  public long getIncomingPackets() {
+    return this.incomingPackets;
+  }
+
+  public void setIncomingPackets(final long incomingPackets) {
+    this.incomingPackets = incomingPackets;
+  }
+
+  public long getOutgoingPackets() {
+    return this.outgoingPackets;
+  }
+
+  public void setOutgoingPackets(final long outgoingPackets) {
+    this.outgoingPackets = outgoingPackets;
+  }
 
   public String getHostname() {
     return this.hostname;
