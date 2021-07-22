@@ -17,6 +17,7 @@ import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.exception.SignalException;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
+import com.zyonicsoftware.minereaper.signal.packet.ahead.ClientDisconnectPacket;
 import com.zyonicsoftware.minereaper.signal.packet.ahead.KeepAlivePacket;
 import com.zyonicsoftware.minereaper.signal.packet.ahead.UpdateUUIDPacket;
 import com.zyonicsoftware.minereaper.signal.scheduler.RedEugeneScheduler;
@@ -70,9 +71,7 @@ public class OutputStreamThread extends RedEugeneSchedulerRunnable {
     try {
       if (this.socket.isClosed()) {
         // interrupt thread
-        if (!this.client.isDisconnected()) {
-          this.client.disconnect();
-        }
+        this.interrupt();
         return;
       }
       // skip when input stream is null
@@ -92,6 +91,9 @@ public class OutputStreamThread extends RedEugeneSchedulerRunnable {
               writingByteBuffer.writeUUID(packet.getConnectionUUID());
             } else if (packet.getClass().equals(KeepAlivePacket.class)) {
               writingByteBuffer.writeInt(-3);
+              writingByteBuffer.writeUUID(this.client.getConnectionUUID().get());
+            } else if (packet.getClass().equals(ClientDisconnectPacket.class)) {
+              writingByteBuffer.writeInt(-4);
               writingByteBuffer.writeUUID(this.client.getConnectionUUID().get());
             } else {
               // get packetId

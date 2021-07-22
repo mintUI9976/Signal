@@ -71,9 +71,7 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
     try {
       if (this.socket.isClosed()) {
         // interrupt thread
-        if (!this.client.isDisconnected()) {
-          this.client.disconnect();
-        }
+        this.interrupt();
         return;
       }
       // check if finalInputStream is null
@@ -106,6 +104,12 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
                 this.resetCalculation();
                 this.receiveIncomingPacketMessage(
                     KeepAlivePacket.class.getName(), connectionUUID.toString());
+              } else if (packetId == -4) {
+                final UUID connectionUUID = readingByteBuffer.readUUID();
+                this.resetCalculation();
+                this.receiveIncomingPacketMessage(
+                    KeepAlivePacket.class.getName(), connectionUUID.toString());
+                this.client.disconnect();
               } else {
                 // get packet
                 final Class<? extends Packet> packet = PacketRegistry.get(packetId);

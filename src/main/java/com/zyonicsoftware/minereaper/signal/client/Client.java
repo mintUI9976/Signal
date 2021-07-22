@@ -21,6 +21,7 @@ import com.zyonicsoftware.minereaper.signal.incoming.InputStreamThread;
 import com.zyonicsoftware.minereaper.signal.keepalive.KeepAliveThread;
 import com.zyonicsoftware.minereaper.signal.outgoing.OutputStreamThread;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
+import com.zyonicsoftware.minereaper.signal.packet.ahead.ClientDisconnectPacket;
 import com.zyonicsoftware.minereaper.signal.scheduler.RedEugeneScheduler;
 import com.zyonicsoftware.minereaper.signal.signal.SignalProvider;
 import org.jetbrains.annotations.NotNull;
@@ -172,7 +173,9 @@ public class Client extends Connection {
   public void disconnect() throws IOException {
     // interrupt the keep alive thread
     this.disconnected = true;
+
     if (Allocator.getAllocation().equals(Allocation.CLIENT_SIDE)) {
+      this.send(new ClientDisconnectPacket());
       this.keepAliveThread.interrupt();
     }
 

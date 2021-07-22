@@ -7,7 +7,7 @@ plugins {
 apply plugin: 'maven'
 
 group 'com.zyonicsoftware.minereaper.signal'
-version 'v1.0.5'
+version 'v1.0.6'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'

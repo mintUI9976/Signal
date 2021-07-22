@@ -18,7 +18,6 @@ import com.zyonicsoftware.minereaper.signal.scheduler.RedEugeneScheduler;
 import com.zyonicsoftware.minereaper.signal.signal.SignalProvider;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.concurrent.TimeUnit;
@@ -51,13 +50,7 @@ public class KeepAliveThread extends RedEugeneSchedulerRunnable {
     super.run();
     if (this.socket.isClosed()) {
       // interrupt thread
-      if (!this.client.isDisconnected()) {
-        try {
-          this.client.disconnect();
-        } catch (final IOException exception) {
-          exception.printStackTrace();
-        }
-      }
+      this.interrupt();
       return;
     }
     this.client.send(new KeepAlivePacket());
