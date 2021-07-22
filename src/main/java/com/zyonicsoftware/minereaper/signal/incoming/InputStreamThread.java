@@ -71,7 +71,9 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
     try {
       if (this.socket.isClosed()) {
         // interrupt thread
-        this.interrupt();
+        if (!this.client.isDisconnected()) {
+          this.client.disconnect();
+        }
         return;
       }
       // check if finalInputStream is null

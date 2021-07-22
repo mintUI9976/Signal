@@ -42,6 +42,7 @@ public class Client extends Connection {
   private final int timeout;
   private long incomingPackets;
   private long outgoingPackets;
+  private boolean disconnected;
 
   public long getIncomingPackets() {
     return this.incomingPackets;
@@ -99,6 +100,7 @@ public class Client extends Connection {
     SignalCallRegistry.registerReferenceCaller(signalCaller);
     this.scheduleDelay = scheduleDelay;
     this.timeout = timeout;
+    this.disconnected = false;
     Allocator.setAllocation(Allocation.CLIENT_SIDE);
     if (timeout <= 10000) {
       throw new SignalException(SignalProvider.getSignalProvider().getTimeoutThrowsAnException());
@@ -169,6 +171,7 @@ public class Client extends Connection {
   @Override
   public void disconnect() throws IOException {
     // interrupt the keep alive thread
+    this.disconnected = true;
     if (Allocator.getAllocation().equals(Allocation.CLIENT_SIDE)) {
       this.keepAliveThread.interrupt();
     }
@@ -190,6 +193,10 @@ public class Client extends Connection {
    */
   public int getTimeout() {
     return this.timeout;
+  }
+
+  public boolean isDisconnected() {
+    return this.disconnected;
   }
 
   /** @param packet adds the packet to list */
