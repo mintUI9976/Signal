@@ -175,7 +175,12 @@ public class Client extends Connection {
     this.disconnected = true;
 
     if (Allocator.getAllocation().equals(Allocation.CLIENT_SIDE)) {
-      this.send(new ClientDisconnectPacket());
+      try {
+        this.send(new ClientDisconnectPacket());
+        Thread.sleep(150);
+      } catch (final InterruptedException exception) {
+        exception.printStackTrace();
+      }
       this.keepAliveThread.interrupt();
     }
 
