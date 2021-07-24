@@ -78,7 +78,9 @@ public class ServerSocketAcceptingThread extends RedEugeneSchedulerRunnable {
             .getDeclaredConstructor(String.class)
             .newInstance(this.toString())
             .acceptSocketConnectionMessage(
-                SignalProvider.getSignalProvider().getAcceptSocketConnectionMessage());
+                SignalProvider.getSignalProvider()
+                    .getAcceptSocketConnectionMessage()
+                    .replaceAll("%ip%", socket.getInetAddress().getHostAddress()));
         SignalCallRegistry.getReferenceCaller()
             .getDeclaredConstructor(String.class)
             .newInstance(this.toString())
@@ -95,7 +97,9 @@ public class ServerSocketAcceptingThread extends RedEugeneSchedulerRunnable {
             .getDeclaredConstructor(String.class)
             .newInstance(this.toString())
             .unAcceptedSocketConnectionMessage(
-                SignalProvider.getSignalProvider().getUnAcceptSocketConnectionMessage());
+                SignalProvider.getSignalProvider()
+                    .getUnAcceptSocketConnectionMessage()
+                    .replaceAll("%ip%", socket.getInetAddress().getHostAddress()));
         socket.close();
       }
     } catch (final IOException

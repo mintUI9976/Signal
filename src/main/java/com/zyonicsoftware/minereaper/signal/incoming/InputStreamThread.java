@@ -17,6 +17,7 @@ import com.zyonicsoftware.minereaper.signal.client.Client;
 import com.zyonicsoftware.minereaper.signal.exception.SignalException;
 import com.zyonicsoftware.minereaper.signal.packet.Packet;
 import com.zyonicsoftware.minereaper.signal.packet.PacketRegistry;
+import com.zyonicsoftware.minereaper.signal.packet.ahead.ClientDisconnectPacket;
 import com.zyonicsoftware.minereaper.signal.packet.ahead.KeepAlivePacket;
 import com.zyonicsoftware.minereaper.signal.packet.ahead.UpdateUUIDPacket;
 import com.zyonicsoftware.minereaper.signal.scheduler.RedEugeneScheduler;
@@ -108,8 +109,11 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
                 final UUID connectionUUID = readingByteBuffer.readUUID();
                 this.resetCalculation();
                 this.receiveIncomingPacketMessage(
-                    KeepAlivePacket.class.getName(), connectionUUID.toString());
-                this.client.disconnect();
+                    ClientDisconnectPacket.class.getName(), connectionUUID.toString());
+                SignalCallRegistry.getReferenceCaller()
+                    .getDeclaredConstructor(String.class)
+                    .newInstance(this.toString())
+                    .clientFromClientServerSideDisconnection(connectionUUID);
               } else {
                 // get packet
                 final Class<? extends Packet> packet = PacketRegistry.get(packetId);
@@ -150,7 +154,9 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
                 .getDeclaredConstructor(String.class)
                 .newInstance(this.toString())
                 .receiveSocketCloseMessage(
-                    SignalProvider.getSignalProvider().getIncomingSocketCloseMessage());
+                    SignalProvider.getSignalProvider()
+                        .getIncomingSocketCloseMessage()
+                        .replaceAll("%ip%", this.socket.getInetAddress().getHostAddress()));
             this.socket.close();
           }
         } else {

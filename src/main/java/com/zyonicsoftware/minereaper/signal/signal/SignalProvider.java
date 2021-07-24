@@ -53,9 +53,12 @@ public class SignalProvider {
         this.prefix + "The packet: %packet% was sent successfully to client: %client%.";
     this.incomingPacketMessage =
         this.prefix + "The packet: %packet% was received successfully from client: %client%.";
-    this.incomingSocketCloseMessage = this.prefix + "The client connection will be closed.";
-    this.acceptSocketConnectionMessage = this.prefix + "The client connection has been accepted.";
-    this.unAcceptSocketConnectionMessage = this.prefix + "The client connection has been canceled.";
+    this.incomingSocketCloseMessage =
+        this.prefix + "The client connection above %ip% will be closed.";
+    this.acceptSocketConnectionMessage =
+        this.prefix + "The client connection above %ip% has been accepted.";
+    this.unAcceptSocketConnectionMessage =
+        this.prefix + "The client connection above %ip% has been canceled.";
     this.disconnectClient = this.prefix + "Client: %client% has been disconnected.";
     this.connectClient = this.prefix + "Client: %client% has been connected.";
     this.disconnectAllClients = this.prefix + "All Clients will be disconnected.";

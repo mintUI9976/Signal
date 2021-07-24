@@ -13,6 +13,8 @@ import com.zyonicsoftware.minereaper.signal.allocator.Allocator;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCaller;
 import com.zyonicsoftware.minereaper.signal.client.Client;
 
+import java.util.UUID;
+
 /**
  * @author Niklas Griese
  * @see com.zyonicsoftware.minereaper.signal.caller.SignalCaller
@@ -89,5 +91,10 @@ public class ExampleSignalMessageInstance extends SignalCaller {
         System.out.println("You are timed out.");
         break;
     }
+  }
+
+  @Override
+  public void clientFromClientServerSideDisconnection(final UUID uuid) {
+    ExampleServer.getServer().disconnectClient(uuid);
   }
 }

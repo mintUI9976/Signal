@@ -11,6 +11,8 @@ package com.zyonicsoftware.minereaper.signal.caller;
 
 import com.zyonicsoftware.minereaper.signal.client.Client;
 
+import java.util.UUID;
+
 /**
  * @author Niklas Griese
  * @see java.lang.reflect.Field
@@ -80,4 +82,15 @@ public abstract class SignalCaller {
    * @see com.zyonicsoftware.minereaper.signal.allocator.Allocation
    */
   public abstract void clientTimeout(final Client client);
+
+  /**
+   * @param uuid will be used to call client shutdown from client to server and the server
+   *     disconnect the client.
+   * @apiNote Important, you must call the event itself to disconnect him
+   * @see Client
+   * @see com.zyonicsoftware.minereaper.signal.allocator.Allocator
+   * @see com.zyonicsoftware.minereaper.signal.allocator.Allocation
+   * @see com.zyonicsoftware.minereaper.signal.example.ExampleSignalMessageInstance
+   */
+  public abstract void clientFromClientServerSideDisconnection(final UUID uuid);
 }
