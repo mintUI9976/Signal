@@ -109,6 +109,38 @@ public class Client extends Connection {
   }
 
   /**
+   * @param hostname to bound on right hostname.
+   * @param port to bound the Socket on the right server port.
+   * @param signalCaller create your own event caller to receive message from Signal ( e.g signal
+   *     has detect the package is to large or an client has been disconnected or else)
+   * @param scheduleDelay this is the delay how long the input and output stream wait before receive
+   *     or send packets ( The lower the delay is the more cpu power the api will consume) The best
+   *     delay I have tried is 60ms.
+   * @param timeout set the timeout, how long the client have time before timeout
+   * @param redEugene set your own redEugene pool
+   * @apiNote your custom value must be above 10000ms
+   */
+  public Client(
+      @NotNull final String hostname,
+      final int port,
+      @NotNull final Class<? extends SignalCaller> signalCaller,
+      final RedEugene redEugene,
+      final long scheduleDelay,
+      final int timeout) {
+    this.hostname = hostname;
+    this.port = port;
+    RedEugeneScheduler.setRedEugene(redEugene);
+    SignalCallRegistry.registerReferenceCaller(signalCaller);
+    this.scheduleDelay = scheduleDelay;
+    this.timeout = timeout;
+    this.disconnected = false;
+    Allocator.setAllocation(Allocation.CLIENT_SIDE);
+    if (timeout <= 10000) {
+      throw new SignalException(SignalProvider.getSignalProvider().getTimeoutThrowsAnException());
+    }
+  }
+
+  /**
    * @param socket use to connect server with client
    * @param scheduleDelay this is the delay how long the input and output stream wait before receive
    *     * or send packets ( The lower the delay is the more cpu power the api will consume) The
