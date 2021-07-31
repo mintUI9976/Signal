@@ -11,6 +11,7 @@ package com.zyonicsoftware.minereaper.signal.client;
 
 import com.zyonicsoftware.minereaper.enums.EugeneFactoryPriority;
 import com.zyonicsoftware.minereaper.redeugene.RedEugene;
+import com.zyonicsoftware.minereaper.scheduler.RedEugeneIntroduction;
 import com.zyonicsoftware.minereaper.signal.allocator.Allocation;
 import com.zyonicsoftware.minereaper.signal.allocator.Allocator;
 import com.zyonicsoftware.minereaper.signal.caller.SignalCallRegistry;
@@ -44,6 +45,7 @@ public class Client extends Connection {
   private long incomingPackets;
   private long outgoingPackets;
   private boolean disconnected;
+  private boolean performSendAsync;
 
   public long getIncomingPackets() {
     return this.incomingPackets;
@@ -93,6 +95,7 @@ public class Client extends Connection {
       final int port,
       @NotNull final Class<? extends SignalCaller> signalCaller,
       final long scheduleDelay,
+      final boolean performSendAsync,
       final int timeout) {
     this.hostname = hostname;
     this.port = port;
@@ -100,6 +103,7 @@ public class Client extends Connection {
         new RedEugene("SignalClientPool", 3, false, EugeneFactoryPriority.NORM));
     SignalCallRegistry.registerReferenceCaller(signalCaller);
     this.scheduleDelay = scheduleDelay;
+    this.performSendAsync = performSendAsync;
     this.timeout = timeout;
     this.disconnected = false;
     Allocator.setAllocation(Allocation.CLIENT_SIDE);
@@ -126,12 +130,14 @@ public class Client extends Connection {
       @NotNull final Class<? extends SignalCaller> signalCaller,
       final RedEugene redEugene,
       final long scheduleDelay,
+      final boolean performSendAsync,
       final int timeout) {
     this.hostname = hostname;
     this.port = port;
     RedEugeneScheduler.setRedEugene(redEugene);
     SignalCallRegistry.registerReferenceCaller(signalCaller);
     this.scheduleDelay = scheduleDelay;
+    this.performSendAsync = performSendAsync;
     this.timeout = timeout;
     this.disconnected = false;
     Allocator.setAllocation(Allocation.CLIENT_SIDE);
@@ -241,6 +247,10 @@ public class Client extends Connection {
 
   /** @param packet adds the packet to list */
   public void send(final Packet packet) {
-    this.outputStreamThread.send(packet);
+    if (!this.performSendAsync){
+      this.outputStreamThread.send(packet);
+    } else {
+      RedEugeneScheduler.getRedEugene().getRedThreadPool().execute(() -> outputStreamThread.send(packet));
+    }
   }
 }
