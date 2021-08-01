@@ -20,21 +20,29 @@ import java.util.List;
  */
 public class IPV4AddressInspector {
 
-  /** init static reference */
-  private static final List<String> acceptedIPAddresses = new ArrayList<>();
+    /**
+     * init static reference
+     */
+    private static final List<String> acceptedIPAddresses = new ArrayList<>();
 
-  /** @param hostname add one specific hostname */
-  public static void addIpv4Address(@NotNull final String hostname) {
-    IPV4AddressInspector.acceptedIPAddresses.add(hostname);
-  }
+    /**
+     * @param hostname add one specific hostname
+     */
+    public static void addIpv4Address(@NotNull final String hostname) {
+        IPV4AddressInspector.acceptedIPAddresses.add(hostname);
+    }
 
-  /** @param hostname adds more then one hostname */
-  public static void addIpv4Addresses(@NotNull final List<String> hostname) {
-    IPV4AddressInspector.acceptedIPAddresses.addAll(hostname);
-  }
+    /**
+     * @param hostname adds more then one hostname
+     */
+    public static void addIpv4Addresses(@NotNull final List<String> hostname) {
+        IPV4AddressInspector.acceptedIPAddresses.addAll(hostname);
+    }
 
-  /** @return the list of accepted ip addresses to check */
-  public static List<String> getAcceptedIPAddresses() {
-    return IPV4AddressInspector.acceptedIPAddresses;
-  }
+    /**
+     * @return the list of accepted ip addresses to check
+     */
+    public static List<String> getAcceptedIPAddresses() {
+        return IPV4AddressInspector.acceptedIPAddresses;
+    }
 }

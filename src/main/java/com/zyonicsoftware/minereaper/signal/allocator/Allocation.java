@@ -11,16 +11,20 @@ package com.zyonicsoftware.minereaper.signal.allocator;
 
 /**
  * @author Niklas Griese
+ * @apiNote to check which state will be use
  * @see java.lang.Enum
  * @see Allocator
  * @see com.zyonicsoftware.minereaper.signal.client.Client
  * @see com.zyonicsoftware.minereaper.signal.server.Server
  * @see com.zyonicsoftware.minereaper.signal.incoming.InputStreamThread
- * @apiNote to check which state will be use
  */
 public enum Allocation {
-  /** @implNote called client on server */
-  CLIENT_FROM_SERVER_SIDE,
-  /** @implNote called client on client */
-  CLIENT_SIDE,
+    /**
+     * @implNote called client on server
+     */
+    CLIENT_FROM_SERVER_SIDE,
+    /**
+     * @implNote called client on client
+     */
+    CLIENT_SIDE,
 }

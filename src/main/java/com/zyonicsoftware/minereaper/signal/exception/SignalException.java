@@ -18,27 +18,28 @@ package com.zyonicsoftware.minereaper.signal.exception;
  */
 public class SignalException extends RuntimeException {
 
-  private static final long serialVersionUID = -5951107884665155782L;
+    private static final long serialVersionUID = -5951107884665155782L;
 
-  public SignalException() {}
+    public SignalException() {
+    }
 
-  public SignalException(final String message) {
-    super(message);
-  }
+    public SignalException(final String message) {
+        super(message);
+    }
 
-  public SignalException(final String message, final Throwable cause) {
-    super(message, cause);
-  }
+    public SignalException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 
-  public SignalException(final Throwable cause) {
-    super(cause);
-  }
+    public SignalException(final Throwable cause) {
+        super(cause);
+    }
 
-  public SignalException(
-      final String message,
-      final Throwable cause,
-      final boolean enableSuppression,
-      final boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
-  }
+    public SignalException(
+            final String message,
+            final Throwable cause,
+            final boolean enableSuppression,
+            final boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

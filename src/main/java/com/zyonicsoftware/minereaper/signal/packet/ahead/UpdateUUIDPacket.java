@@ -22,13 +22,15 @@ import java.util.UUID;
  * @see WritingByteBuffer
  */
 public class UpdateUUIDPacket extends Packet {
-  public UpdateUUIDPacket(final UUID connectionUUID) {
-    super(connectionUUID);
-  }
+    public UpdateUUIDPacket(final UUID connectionUUID) {
+        super(connectionUUID);
+    }
 
-  @Override
-  public void send(final WritingByteBuffer writingByteBuffer) {}
+    @Override
+    public void send(final WritingByteBuffer writingByteBuffer) {
+    }
 
-  @Override
-  public void receive(final ReadingByteBuffer readingByteBuffer) {}
+    @Override
+    public void receive(final ReadingByteBuffer readingByteBuffer) {
+    }
 }

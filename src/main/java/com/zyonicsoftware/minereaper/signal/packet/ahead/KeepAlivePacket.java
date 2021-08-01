@@ -23,17 +23,19 @@ import java.util.UUID;
  */
 public class KeepAlivePacket extends Packet {
 
-  public KeepAlivePacket(final UUID connectionUUID) {
-    super(connectionUUID);
-  }
+    public KeepAlivePacket(final UUID connectionUUID) {
+        super(connectionUUID);
+    }
 
-  public KeepAlivePacket() {
-    super(null);
-  }
+    public KeepAlivePacket() {
+        super(null);
+    }
 
-  @Override
-  public void send(final WritingByteBuffer writingByteBuffer) {}
+    @Override
+    public void send(final WritingByteBuffer writingByteBuffer) {
+    }
 
-  @Override
-  public void receive(final ReadingByteBuffer readingByteBuffer) {}
+    @Override
+    public void receive(final ReadingByteBuffer readingByteBuffer) {
+    }
 }

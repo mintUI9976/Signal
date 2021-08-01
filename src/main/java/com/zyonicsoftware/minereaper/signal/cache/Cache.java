@@ -20,35 +20,35 @@ import java.util.List;
  */
 public class Cache {
 
-  private static final List<Client> clientList = new ArrayList<>();
-  private static long incomingPackets;
-  private static long outgoingPackets;
+    private static final List<Client> clientList = new ArrayList<>();
+    private static long incomingPackets;
+    private static long outgoingPackets;
 
-  public static void add(final Client client) {
-    Cache.getClientList().add(client);
-  }
+    public static void add(final Client client) {
+        Cache.getClientList().add(client);
+    }
 
-  public static void remove(final Client client) {
-    Cache.getClientList().remove(client);
-  }
+    public static void remove(final Client client) {
+        Cache.getClientList().remove(client);
+    }
 
-  public static long getIncomingPackets() {
-    return Cache.incomingPackets;
-  }
+    public static long getIncomingPackets() {
+        return Cache.incomingPackets;
+    }
 
-  public static void setIncomingPackets(final long incomingPackets) {
-    Cache.incomingPackets = incomingPackets;
-  }
+    public static void setIncomingPackets(final long incomingPackets) {
+        Cache.incomingPackets = incomingPackets;
+    }
 
-  public static long getOutgoingPackets() {
-    return Cache.outgoingPackets;
-  }
+    public static long getOutgoingPackets() {
+        return Cache.outgoingPackets;
+    }
 
-  public static void setOutgoingPackets(final long outgoingPackets) {
-    Cache.outgoingPackets = outgoingPackets;
-  }
+    public static void setOutgoingPackets(final long outgoingPackets) {
+        Cache.outgoingPackets = outgoingPackets;
+    }
 
-  public static List<Client> getClientList() {
-    return Cache.clientList;
-  }
+    public static List<Client> getClientList() {
+        return Cache.clientList;
+    }
 }

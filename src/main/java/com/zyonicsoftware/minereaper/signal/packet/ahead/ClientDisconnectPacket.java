@@ -17,17 +17,19 @@ import java.util.UUID;
 
 public class ClientDisconnectPacket extends Packet {
 
-  public ClientDisconnectPacket(final UUID connectionUUID) {
-    super(connectionUUID);
-  }
+    public ClientDisconnectPacket(final UUID connectionUUID) {
+        super(connectionUUID);
+    }
 
-  public ClientDisconnectPacket() {
-    super(null);
-  }
+    public ClientDisconnectPacket() {
+        super(null);
+    }
 
-  @Override
-  public void send(final WritingByteBuffer writingByteBuffer) {}
+    @Override
+    public void send(final WritingByteBuffer writingByteBuffer) {
+    }
 
-  @Override
-  public void receive(final ReadingByteBuffer readingByteBuffer) {}
+    @Override
+    public void receive(final ReadingByteBuffer readingByteBuffer) {
+    }
 }

@@ -17,17 +17,23 @@ import java.util.LinkedList;
  */
 public class SignalCallRegistry {
 
-  /** @apiNote cached your reference (intern) */
-  private static final LinkedList<Class<? extends SignalCaller>> registeredReferenceCaller =
-      new LinkedList<>();
+    /**
+     * @apiNote cached your reference (intern)
+     */
+    private static final LinkedList<Class<? extends SignalCaller>> registeredReferenceCaller =
+            new LinkedList<>();
 
-  /** @return your caller reference (intern) */
-  public static Class<? extends SignalCaller> getReferenceCaller() {
-    return SignalCallRegistry.registeredReferenceCaller.get(0);
-  }
+    /**
+     * @return your caller reference (intern)
+     */
+    public static Class<? extends SignalCaller> getReferenceCaller() {
+        return SignalCallRegistry.registeredReferenceCaller.get(0);
+    }
 
-  /** @param signalCaller registered your reference */
-  public static void registerReferenceCaller(final Class<? extends SignalCaller> signalCaller) {
-    SignalCallRegistry.registeredReferenceCaller.add(signalCaller);
-  }
+    /**
+     * @param signalCaller registered your reference
+     */
+    public static void registerReferenceCaller(final Class<? extends SignalCaller> signalCaller) {
+        SignalCallRegistry.registeredReferenceCaller.add(signalCaller);
+    }
 }

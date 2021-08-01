@@ -18,23 +18,27 @@ import java.util.concurrent.atomic.AtomicReference;
  * @see AtomicReference
  */
 public abstract class Connection {
-  /** @apiNote generated an uuid to verify any client */
-  private final AtomicReference<UUID> connectionUUID = new AtomicReference<>(UUID.randomUUID());
+    /**
+     * @apiNote generated an uuid to verify any client
+     */
+    private final AtomicReference<UUID> connectionUUID = new AtomicReference<>(UUID.randomUUID());
 
-  /** @return the generated uuid */
-  public AtomicReference<UUID> getConnectionUUID() {
-    return this.connectionUUID;
-  }
+    /**
+     * @return the generated uuid
+     */
+    public AtomicReference<UUID> getConnectionUUID() {
+        return this.connectionUUID;
+    }
 
-  /**
-   * @apiNote call socket connect
-   * @throws IOException when socket connection failed
-   */
-  public abstract void connect() throws IOException;
+    /**
+     * @throws IOException when socket connection failed
+     * @apiNote call socket connect
+     */
+    public abstract void connect() throws IOException;
 
-  /**
-   * @apiNote call socket disconnect
-   * @throws IOException when socket disconnect failed
-   */
-  public abstract void disconnect() throws IOException;
+    /**
+     * @throws IOException when socket disconnect failed
+     * @apiNote call socket disconnect
+     */
+    public abstract void disconnect() throws IOException;
 }

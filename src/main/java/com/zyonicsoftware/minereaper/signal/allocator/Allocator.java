@@ -11,25 +11,31 @@ package com.zyonicsoftware.minereaper.signal.allocator;
 
 /**
  * @author Niklas Griese
+ * @apiNote to check which state will be use
  * @see java.lang.Enum
  * @see Allocation
  * @see com.zyonicsoftware.minereaper.signal.client.Client
  * @see com.zyonicsoftware.minereaper.signal.server.Server
  * @see com.zyonicsoftware.minereaper.signal.incoming.InputStreamThread
- * @apiNote to check which state will be use
  */
 public class Allocator {
 
-  /** @implNote register which state will be use */
-  private static Allocation allocation;
+    /**
+     * @implNote register which state will be use
+     */
+    private static Allocation allocation;
 
-  /** @return which state has been used */
-  public static Allocation getAllocation() {
-    return Allocator.allocation;
-  }
+    /**
+     * @return which state has been used
+     */
+    public static Allocation getAllocation() {
+        return Allocator.allocation;
+    }
 
-  /** @param allocation set which state will be use */
-  public static void setAllocation(final Allocation allocation) {
-    Allocator.allocation = allocation;
-  }
+    /**
+     * @param allocation set which state will be use
+     */
+    public static void setAllocation(final Allocation allocation) {
+        Allocator.allocation = allocation;
+    }
 }

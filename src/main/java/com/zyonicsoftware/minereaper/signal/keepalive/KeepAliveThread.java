@@ -29,52 +29,58 @@ import java.util.concurrent.TimeUnit;
  */
 public class KeepAliveThread extends RedEugeneSchedulerRunnable {
 
-  /** init client */
-  private final Client client;
+    /**
+     * init client
+     */
+    private final Client client;
 
-  private final Socket socket;
+    private final Socket socket;
 
-  public KeepAliveThread(
-      @NotNull final String eugeneJobName,
-      @NotNull final TimeUnit timeUnit,
-      final long period,
-      final Client client) {
-    super(eugeneJobName, timeUnit, period);
-    this.client = client;
-    this.socket = client.getSocket();
-  }
-
-  /** call at specific timeout the "keep a live" packet */
-  @Override
-  public void run() {
-    super.run();
-    if (this.socket.isClosed()) {
-      // interrupt thread
-      this.interrupt();
-      return;
+    public KeepAliveThread(
+            @NotNull final String eugeneJobName,
+            @NotNull final TimeUnit timeUnit,
+            final long period,
+            final Client client) {
+        super(eugeneJobName, timeUnit, period);
+        this.client = client;
+        this.socket = client.getSocket();
     }
-    this.client.send(new KeepAlivePacket());
-  }
 
-  /** destroy the runner at the client disconnect */
-  public void interrupt() {
-    final String jobName = this.getEugeneJob().getName();
-    if (RedEugeneScheduler.getRedEugeneIntroduction().forceCancelEugeneJob(jobName)) {
-      try {
-        SignalCallRegistry.getReferenceCaller()
-            .getDeclaredConstructor(String.class)
-            .newInstance(this.toString())
-            .canceledJobMessage(
-                SignalProvider.getSignalProvider()
-                    .getCanceledJobMessage()
-                    .replaceAll("%job%", jobName));
-      } catch (final InstantiationException
-          | IllegalAccessException
-          | InvocationTargetException
-          | NoSuchMethodException exception) {
-        throw new SignalException(
-            SignalProvider.getSignalProvider().getCanceledJobThrowsAnException(), exception);
-      }
+    /**
+     * call at specific timeout the "keep a live" packet
+     */
+    @Override
+    public void run() {
+        super.run();
+        if (this.socket.isClosed()) {
+            // interrupt thread
+            this.interrupt();
+            return;
+        }
+        this.client.send(new KeepAlivePacket());
     }
-  }
+
+    /**
+     * destroy the runner at the client disconnect
+     */
+    public void interrupt() {
+        final String jobName = this.getEugeneJob().getName();
+        if (RedEugeneScheduler.getRedEugeneIntroduction().forceCancelEugeneJob(jobName)) {
+            try {
+                SignalCallRegistry.getReferenceCaller()
+                        .getDeclaredConstructor(String.class)
+                        .newInstance(this.toString())
+                        .canceledJobMessage(
+                                SignalProvider.getSignalProvider()
+                                        .getCanceledJobMessage()
+                                        .replaceAll("%job%", jobName));
+            } catch (final InstantiationException
+                    | IllegalAccessException
+                    | InvocationTargetException
+                    | NoSuchMethodException exception) {
+                throw new SignalException(
+                        SignalProvider.getSignalProvider().getCanceledJobThrowsAnException(), exception);
+            }
+        }
+    }
 }

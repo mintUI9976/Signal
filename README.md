@@ -2,7 +2,7 @@
 <a href="https://zyonicsoftware.com"> <img src="https://i.postimg.cc/HnjVQNdQ/signal.png" /></a>
 <h2>A library for java with the native java socket technology and in combination with the custom bytebuffer allocator technology by boonproject</h2>
   <hr />
-  <a href="https://gitlab.zyonicsoftware.com/mint9976/Signal/-/packages"><img src="https://img.shields.io/badge/release-v1.1.3-9cf" /></a>
+  <a href="https://gitlab.zyonicsoftware.com/mint9976/Signal/-/packages"><img src="https://img.shields.io/badge/release-v1.1.5-9cf" /></a>
   <a href="https://github.com/mintUI9976/Signal"><img src="https://img.shields.io/github/languages/code-size/mintUI9976/Signal?color=orange" /></a>
   <a href="https://github.com/mintUI9976/Signal"><img src="https://img.shields.io/tokei/lines/github/mintUI9976/Signal?color=yellow" /></a>
   <a href="https://github.com/mintUI9976/Signal/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mintUI9976/Signal" /></a>
@@ -62,7 +62,7 @@ maven{url"https://gitlab.zyonicsoftware.com/api/v4/projects/144/packages/maven"}
 ````
 
 ````xml
-compile group:'com.zyonicsoftware.minereaper.signal',name:'Signal',version:'v1.1.3'
+compile group:'com.zyonicsoftware.minereaper.signal',name:'Signal',version:'v1.1.5'
 ````
 
 <hr />
@@ -74,12 +74,12 @@ compile group:'com.zyonicsoftware.minereaper.signal',name:'Signal',version:'v1.1
 <dependency>
     <groupId>com.zyonicsoftware.minereaper.signal</groupId>
     <artifactId>Signal</artifactId>
-    <version>v1.1.3</version>
+    <version>v1.1.5</version>
 </dependency>
 ````
 
 ````xml
-mvn dependency:get -Dartifact=com.zyonicsoftware.minereaper.signal:Signal:v1.1.3
+mvn dependency:get -Dartifact=com.zyonicsoftware.minereaper.signal:Signal:v1.1.5
 ````
 
 ````xml
