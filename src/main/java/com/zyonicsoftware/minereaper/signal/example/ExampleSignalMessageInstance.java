@@ -77,15 +77,15 @@ public class ExampleSignalMessageInstance extends SignalCaller {
   }
 
   /**
-   * @param client set the client which is time outed and receive nothing response
+   * @param uuid set the client which is time outed and receive nothing response
    * @apiNote at the first case the server has checked the client receive nothing response at the
    *     second case the client has checked the server send nothing response to receive them
    */
   @Override
-  public void clientTimeout(final Client client) {
+  public void clientTimeout(final UUID uuid) {
     switch (Allocator.getAllocation()) {
       case CLIENT_FROM_SERVER_SIDE:
-        ExampleServer.getServer().disconnectClient(client.getConnectionUUID().get());
+        ExampleServer.getServer().disconnectClient(uuid);
         break;
       case CLIENT_SIDE:
         System.out.println("You are timed out.");

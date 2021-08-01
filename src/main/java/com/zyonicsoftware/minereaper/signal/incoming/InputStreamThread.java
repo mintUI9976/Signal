@@ -220,7 +220,7 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
           SignalCallRegistry.getReferenceCaller()
               .getDeclaredConstructor(String.class)
               .newInstance(this.toString())
-              .clientTimeout(this.client);
+              .clientTimeout(this.client.getConnectionUUID().get());
         } catch (final InstantiationException
             | NoSuchMethodException
             | InvocationTargetException

@@ -74,14 +74,14 @@ public abstract class SignalCaller {
   public abstract void clientTimeoutMessage(final String message);
 
   /**
-   * @param client set the client which is time outed and receive nothing response
+   * @param uuid set the client which is time outed and receive nothing response
    * @apiNote Important, you must let the client disconnect itself with the CLIENT_FROM_SERVER_SIDE
    *     or CLIENT_SIDE object an example can you find her
    * @see com.zyonicsoftware.minereaper.signal.example.ExampleSignalMessageInstance
    * @see com.zyonicsoftware.minereaper.signal.allocator.Allocator
    * @see com.zyonicsoftware.minereaper.signal.allocator.Allocation
    */
-  public abstract void clientTimeout(final Client client);
+  public abstract void clientTimeout(final UUID uuid);
 
   /**
    * @param uuid will be used to call client shutdown from client to server and the server
