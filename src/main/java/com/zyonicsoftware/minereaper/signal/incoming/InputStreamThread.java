@@ -90,56 +90,64 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
                             // read packetId
                             final int packetId = readingByteBuffer.readInt();
                             // check if packet is UpdateUUIDPacket
-                            if (packetId == -2) {
-                                // read connectionUUID
-                                final UUID connectionUUID = readingByteBuffer.readUUID();
-                                // set updated connectionUUID
-                                this.client.getConnectionUUID().set(connectionUUID);
-                                this.resetCalculation();
-                                this.receiveIncomingPacketMessage(
-                                        UpdateUUIDPacket.class.getName(), connectionUUID.toString());
-                            } else if (packetId == -3) {
-                                // read connectionUUID
-                                final UUID connectionUUID = readingByteBuffer.readUUID();
-                                // set updated connectionUUID
-                                this.resetCalculation();
-                                this.receiveIncomingPacketMessage(
-                                        KeepAlivePacket.class.getName(), connectionUUID.toString());
-                            } else if (packetId == -4) {
-                                final UUID connectionUUID = readingByteBuffer.readUUID();
-                                this.resetCalculation();
-                                this.receiveIncomingPacketMessage(
-                                        ClientDisconnectPacket.class.getName(), connectionUUID.toString());
-                                SignalCallRegistry.getReferenceCaller()
-                                        .getDeclaredConstructor(String.class)
-                                        .newInstance(this.toString())
-                                        .clientFromClientServerSideDisconnection(connectionUUID);
-                            } else {
-                                // get packet
-                                final Class<? extends Packet> packet = PacketRegistry.get(packetId);
-
-                                // check if received packet not null
-                                if (packet != null) {
+                            switch (packetId) {
+                                case -2: {
                                     // read connectionUUID
                                     final UUID connectionUUID = readingByteBuffer.readUUID();
-                                    // initialise packet
-                                    packet
-                                            .getDeclaredConstructor(UUID.class)
-                                            .newInstance(connectionUUID)
-                                            .receive(readingByteBuffer);
-                                    Cache.setIncomingPackets(Cache.getIncomingPackets() + 1);
-                                    this.client.setIncomingPackets(this.client.getIncomingPackets() + 1);
-                                    // set cached time to 0;
+                                    // set updated connectionUUID
+                                    this.client.getConnectionUUID().set(connectionUUID);
                                     this.resetCalculation();
-                                    // SignalProvider.getSignalProvider().setIncomingPackets(SignalProvider.getSignalProvider().getIncomingPackets() + 1);
-                                    this.receiveIncomingPacketMessage(packet.getName(), connectionUUID.toString());
-                                } else {
+                                    this.receiveIncomingPacketMessage(
+                                            UpdateUUIDPacket.class.getName(), connectionUUID.toString());
+                                    break;
+                                }
+                                case -3: {
+                                    // read connectionUUID
+                                    final UUID connectionUUID = readingByteBuffer.readUUID();
+                                    // set updated connectionUUID
+                                    this.resetCalculation();
+                                    this.receiveIncomingPacketMessage(
+                                            KeepAlivePacket.class.getName(), connectionUUID.toString());
+                                    break;
+                                }
+                                case -4: {
+                                    final UUID connectionUUID = readingByteBuffer.readUUID();
+                                    this.resetCalculation();
+                                    this.receiveIncomingPacketMessage(
+                                            ClientDisconnectPacket.class.getName(), connectionUUID.toString());
                                     SignalCallRegistry.getReferenceCaller()
                                             .getDeclaredConstructor(String.class)
                                             .newInstance(this.toString())
-                                            .receivePacketIsNullMessage(
-                                                    SignalProvider.getSignalProvider().getIncomingPacketIsNull());
+                                            .clientFromClientServerSideDisconnection(connectionUUID);
+                                    break;
                                 }
+                                default:
+                                    // get packet
+                                    final Class<? extends Packet> packet = PacketRegistry.get(packetId);
+
+                                    // check if received packet not null
+                                    if (packet != null) {
+                                        // read connectionUUID
+                                        final UUID connectionUUID = readingByteBuffer.readUUID();
+                                        // initialise packet
+                                        packet
+                                                .getDeclaredConstructor(UUID.class)
+                                                .newInstance(connectionUUID)
+                                                .receive(readingByteBuffer);
+                                        Cache.setIncomingPackets(Cache.getIncomingPackets() + 1);
+                                        this.client.setIncomingPackets(this.client.getIncomingPackets() + 1);
+                                        // set cached time to 0;
+                                        this.resetCalculation();
+                                        // SignalProvider.getSignalProvider().setIncomingPackets(SignalProvider.getSignalProvider().getIncomingPackets() + 1);
+                                        this.receiveIncomingPacketMessage(packet.getName(), connectionUUID.toString());
+                                    } else {
+                                        SignalCallRegistry.getReferenceCaller()
+                                                .getDeclaredConstructor(String.class)
+                                                .newInstance(this.toString())
+                                                .receivePacketIsNullMessage(
+                                                        SignalProvider.getSignalProvider().getIncomingPacketIsNull());
+                                    }
+                                    break;
                             }
                         } else {
                             SignalCallRegistry.getReferenceCaller()
@@ -212,7 +220,7 @@ public class InputStreamThread extends RedEugeneSchedulerRunnable {
             this.cachedTime = System.currentTimeMillis();
         } else {
             final long estimatedTime = System.currentTimeMillis() - this.cachedTime;
-            if (estimatedTime == this.client.getTimeout()) {
+            if (estimatedTime >= this.client.getTimeout()) {
                 try {
                     SignalCallRegistry.getReferenceCaller()
                             .getDeclaredConstructor(String.class)

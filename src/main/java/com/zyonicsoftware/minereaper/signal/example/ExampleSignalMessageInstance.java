@@ -96,6 +96,7 @@ public class ExampleSignalMessageInstance extends SignalCaller {
                 break;
             case CLIENT_SIDE:
                 System.out.println("You are timed out.");
+                System.exit(-1);
                 break;
         }
     }

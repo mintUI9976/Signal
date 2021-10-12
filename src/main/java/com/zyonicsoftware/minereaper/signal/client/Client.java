@@ -44,6 +44,7 @@ public class Client extends Connection {
     private long incomingPackets;
     private long outgoingPackets;
     private boolean disconnected;
+    private boolean connected;
     private boolean performSendAsync;
 
     public long getIncomingPackets() {
@@ -104,7 +105,6 @@ public class Client extends Connection {
         this.scheduleDelay = scheduleDelay;
         this.performSendAsync = performSendAsync;
         this.timeout = timeout;
-        this.disconnected = false;
         Allocator.setAllocation(Allocation.CLIENT_SIDE);
         if (timeout <= 10000) {
             throw new SignalException(SignalProvider.getSignalProvider().getTimeoutThrowsAnException());
@@ -138,7 +138,6 @@ public class Client extends Connection {
         this.scheduleDelay = scheduleDelay;
         this.performSendAsync = performSendAsync;
         this.timeout = timeout;
-        this.disconnected = false;
         Allocator.setAllocation(Allocation.CLIENT_SIDE);
         if (timeout <= 10000) {
             throw new SignalException(SignalProvider.getSignalProvider().getTimeoutThrowsAnException());
@@ -198,6 +197,7 @@ public class Client extends Connection {
                             "KeepAliveThread-" + random, TimeUnit.MILLISECONDS, this.timeout - 1000, this);
             RedEugeneScheduler.getRedEugeneIntroduction().scheduleWithoutDelay(this.keepAliveThread);
         }
+        this.connected = true;
     }
 
     /**
@@ -209,8 +209,6 @@ public class Client extends Connection {
     @Override
     public void disconnect() throws IOException {
         // interrupt the keep alive thread
-        this.disconnected = true;
-
         if (Allocator.getAllocation().equals(Allocation.CLIENT_SIDE)) {
             try {
                 this.send(new ClientDisconnectPacket());
@@ -230,6 +228,8 @@ public class Client extends Connection {
             // closed socket
             this.socket.close();
         }
+        this.connected = false;
+        this.disconnected = true;
     }
 
     /**
@@ -242,6 +242,10 @@ public class Client extends Connection {
 
     public boolean isDisconnected() {
         return this.disconnected;
+    }
+
+    public boolean isConnected() {
+        return this.connected;
     }
 
     /**
