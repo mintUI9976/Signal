@@ -2,7 +2,7 @@
 <a href="https://github.com/mintUI9976/Signal"> <img src="https://i.postimg.cc/HnjVQNdQ/signal.png" /></a>
 <h2>A library for java with the native java socket technology and in combination with the custom bytebuffer allocator technology by boonproject</h2>
   <hr />
-  <a href="https://github.com/mintUI9976?tab=packages&repo_name=Signal"><img src="https://img.shields.io/badge/release-v1.2.1-9cf" /></a>
+  <a href="https://github.com/mintUI9976?tab=packages&repo_name=Signal"><img src="https://img.shields.io/badge/release-v1.2.2-9cf" /></a>
   <a href="https://github.com/mintUI9976/Signal"><img src="https://img.shields.io/github/languages/code-size/mintUI9976/Signal?color=orange" /></a>
   <a href="https://github.com/mintUI9976/Signal"><img src="https://img.shields.io/tokei/lines/github/mintUI9976/Signal?color=yellow" /></a>
   <a href="https://github.com/mintUI9976/Signal/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mintUI9976/Signal" /></a>

@@ -1,17 +1,11 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 plugins {
     id 'java'
-    id 'maven'
-    id 'maven-publish'
 }
-
-apply plugin: 'maven'
 
 group 'com.zyonicsoftware.minereaper.signal'
-version 'v1.2.1'
-
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
+version 'v1.2.2'
 
 repositories {
     mavenCentral()
@@ -22,15 +16,19 @@ dependencies {
     implementation group: 'org.jetbrains', name: 'annotations', version: '20.1.0'
     implementation group: 'io.fastjson', name: 'boon', version: '0.34'
     implementation 'com.github.mintUI9976:RedEugene:v0.3.2'
-    implementation 'com.github.jitpack:gradle-simple:1.0'
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [version: version]
+    }
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 jar {
-    from sourceSets.main.allSource
     from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
-    processResources {
-        exclude("*")
-    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
 }
