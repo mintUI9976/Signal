@@ -2,10 +2,16 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     id 'java'
+    id 'maven-publish'
 }
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.17 // java 15
+targetCompatibility = 1.17
 
 group 'com.zyonicsoftware.minereaper.signal'
-version 'v1.2.2'
+version 'v1.2.3'
 
 repositories {
     mavenCentral()
@@ -31,4 +37,17 @@ jar {
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     exclude("META-INF/*.SF", "META-INF/*.DSA", "META-INF/*.RSA")
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+wrapper {
+    gradleVersion = "7.2"
+    distributionType = Wrapper.DistributionType.ALL
 }
