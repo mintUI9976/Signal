@@ -7,7 +7,7 @@ plugins {
 apply plugin: 'maven'
 
 group 'com.zyonicsoftware.minereaper.signal'
-version 'v1.2.0'
+version 'v1.2.1'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -15,13 +15,14 @@ tasks.withType(JavaCompile) {
 
 repositories {
     mavenCentral()
-    maven { url 'https://gitlab.zyonicsoftware.com/api/v4/projects/164/packages/maven' }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    compile group: 'org.jetbrains', name: 'annotations', version: '20.1.0'
-    compile group: 'io.fastjson', name: 'boon', version: '0.34'
-    compile group: 'com.zyonicsoftware.minereaper.redeugene', name: 'redeugene', version: 'v0.2.4'
+    implementation group: 'org.jetbrains', name: 'annotations', version: '20.1.0'
+    implementation group: 'io.fastjson', name: 'boon', version: '0.34'
+    implementation 'com.github.mintUI9976:RedEugene:v0.3.2'
+    implementation 'com.github.jitpack:gradle-simple:1.0'
 }
 
 jar {
@@ -32,26 +33,4 @@ jar {
     processResources {
         exclude("*")
     }
-}
-
-publishing {
-    publications {
-        library(MavenPublication) {
-            from components.java
-        }
-    }
-
-    repositories {
-        maven {
-            url "https://gitlab.zyonicsoftware.com/api/v4/projects/144/packages/maven"
-            credentials(HttpHeaderCredentials) {
-                name = "Job-Token"
-                value = System.getenv("CI_JOB_TOKEN")
-            }
-            authentication {
-                header(HttpHeaderAuthentication)
-            }
-        }
-    }
-
 }

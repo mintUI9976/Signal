@@ -1,28 +1,19 @@
 <div align="center">
-<a href="https://zyonicsoftware.com"> <img src="https://i.postimg.cc/HnjVQNdQ/signal.png" /></a>
+<a href="https://github.com/mintUI9976/Signal"> <img src="https://i.postimg.cc/HnjVQNdQ/signal.png" /></a>
 <h2>A library for java with the native java socket technology and in combination with the custom bytebuffer allocator technology by boonproject</h2>
   <hr />
-  <a href="https://gitlab.zyonicsoftware.com/mint9976/Signal/-/packages"><img src="https://img.shields.io/badge/release-v1.2.0-9cf" /></a>
+  <a href="https://github.com/mintUI9976?tab=packages&repo_name=Signal"><img src="https://img.shields.io/badge/release-v1.2.1-9cf" /></a>
   <a href="https://github.com/mintUI9976/Signal"><img src="https://img.shields.io/github/languages/code-size/mintUI9976/Signal?color=orange" /></a>
   <a href="https://github.com/mintUI9976/Signal"><img src="https://img.shields.io/tokei/lines/github/mintUI9976/Signal?color=yellow" /></a>
   <a href="https://github.com/mintUI9976/Signal/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mintUI9976/Signal" /></a>
   <a href="https://github.com/mintUI9976/Signal/stargazers"><img src="https://img.shields.io/github/stars/mintUI9976/Signal?color=ff69b4" /></a>
   <a href=""><img src="https://img.shields.io/github/languages/count/mintUI9976/Signal?color=blueviolet" /></a>
-  <img src="https://img.shields.io/discord/743171495454441503?label=discord&color=cyan" />
   <img src="https://img.shields.io/badge/opensource-❤-9cf">
   <br />
   <br />
   <a href="https://github.com/boonproject">BoonProject</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://zyonicsoftware.com">Website</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
   <a href="https://github.com/mintUI9976/Signal/blob/master/LICENSE">License</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://gitlab.zyonicsoftware.com">Gitlab</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://github.com/Zyonic-Software">Github</a>
-  <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-  <a href="https://twitter.com/zyonicsoftware">Twitter</a>
   <br />
   <hr />
 </div>
@@ -58,50 +49,11 @@
 ### Implementation / Gradle
 
 ````xml
-maven{url"https://gitlab.zyonicsoftware.com/api/v4/projects/144/packages/maven"}   
+maven { url 'https://jitpack.io' }
 ````
 
 ````xml
-compile group:'com.zyonicsoftware.minereaper.signal',name:'Signal',version:'v1.2.0'
-````
-
-<hr />
-
-### Implementation / Maven
-
-````xml
-
-<dependency>
-    <groupId>com.zyonicsoftware.minereaper.signal</groupId>
-    <artifactId>Signal</artifactId>
-    <version>v1.2.0</version>
-</dependency>
-````
-
-````xml
-mvn dependency:get -Dartifact=com.zyonicsoftware.minereaper.signal:Signal:v1.2.0
-````
-
-````xml
-
-<repositories>
-    <repository>
-        <id>gitlab-maven</id>
-        <url>https://gitlab.zyonicsoftware.com/api/v4/projects/144/packages/maven</url>
-    </repository>
-</repositories>
-
-<distributionManagement>
-<repository>
-    <id>gitlab-maven</id>
-    <url>https://gitlab.zyonicsoftware.com/api/v4/projects/144/packages/maven</url>
-</repository>
-
-<snapshotRepository>
-    <id>gitlab-maven</id>
-    <url>https://gitlab.zyonicsoftware.com/api/v4/projects/144/packages/maven</url>
-</snapshotRepository>
-</distributionManagement>
+implementation 'com.github.mintUI9976:Signal:Tag'
 ````
 
 <hr />
@@ -109,7 +61,7 @@ mvn dependency:get -Dartifact=com.zyonicsoftware.minereaper.signal:Signal:v1.2.0
 ### Learn about Signal
 
 - Signal example
-  guide, [Signal Explained](https://gitlab.zyonicsoftware.com/mint9976/Signal/-/tree/master/src/main/java/com/zyonicsoftware/minereaper/signal/example)
+  guide, [Signal Explained](https://github.com/mintUI9976/Signal/tree/master/src/main/java/com/zyonicsoftware/minereaper/signal/example)
 
 
 
